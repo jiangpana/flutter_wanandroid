@@ -2,63 +2,70 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_wanandroid/ext/NavExt.dart';
+import 'package:flutter_wanandroid/ui/widget/StatePage.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
-import '../../../base/BaseState.dart';
 import '../../../base/BaseViewModel.dart';
 import '../../../data/entity/article_list_entity.dart';
-import '../../../http/WanService.dart';
 import '../../../http/WanUrls.dart';
 import '../../widget/Browser.dart';
+import '../../widget/Loading.dart';
 import '../../widget/Refresh.dart';
 
 class HomePageState {
-  var curPage = 0;
+
   var datas = <ArticleListDatas>[];
 
-  HomePageState.initial()
-      : curPage = 0,
-        datas = <ArticleListDatas>[];
+  ArticleListEntity? articleListEntity;
 
-  HomePageState({required this.curPage, required this.datas});
+  HomePageState.initial()
+      :datas = <ArticleListDatas>[];
+
+  HomePageState(
+      { required this.datas, this.articleListEntity});
 
   HomePageState copyWith({
-    curPage,
     datas,
+    articleListEntity,
   }) {
     return HomePageState(
-      curPage: curPage ?? this.curPage,
       datas: datas ?? this.datas,
+      articleListEntity: articleListEntity ?? this.articleListEntity,
     );
+  }
+
+  int getNextPage() {
+  return articleListEntity?.curPage ?? 0;
+  }
+
+  void refresh() {
+    articleListEntity =null;
   }
 }
 
 class HomeVm extends BaseViewModel<HomePageState> {
-
   HomeVm([HomePageState? state]) : super(state ?? HomePageState.initial()) {}
 
   _request() async {
-    if (state.curPage == 0) {
-      state.datas.clear();
-    }
     var value = await service.httpGet<ArticleListEntity>(
-        "${WanUrls.HOME_LIST}${state.curPage}/json");
-    print(value?.datas?.first);
-    var data = <ArticleListDatas>[];
-    data.addAll(state.datas);
-    data.addAll(value!.datas!);
-    state = state.copyWith(datas: data);
+        "${WanUrls.HOME_LIST}${state.getNextPage()}/json");
+    if (value != null) {
+      if (value.curPage == 1) {
+        state.datas.clear();
+      }
+      var data = <ArticleListDatas>[];
+      data.addAll(state.datas);
+      data.addAll(value.datas ?? []);
+      state = state.copyWith(datas: data ,articleListEntity:value);
+    }
   }
 
   _refresh() async {
-    print("_refresh");
-    state.curPage = 0;
+    state.refresh();
     await _request();
   }
 
   _loadMore() async {
-    print("_loadMore");
-    state.curPage++;
     await _request();
   }
 }
@@ -91,11 +98,43 @@ class _HomeArListPageState extends State<HomeArListPage>
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    return Consumer(builder: (context, watch, _) {
-      var data = watch.watch(homeProvider).datas;
-      return RefreshList(
+    return Consumer(builder: (context, ref, _) {
+      var data = ref.watch(homeProvider).datas;
+      // var httpState = ref.watch(vm.getStateProvider()).state;
+      return refreshListStatePage(
+          child: RefreshList(
+              controller: refreshController,
+              onRefresh: () async {
+                print("onRefresh");
+                await vm._refresh();
+                refreshController.refreshCompleted();
+              },
+              onLoading: () async {
+                await vm._loadMore();
+                refreshController.loadComplete();
+              },
+              content: ListView.builder(
+                itemBuilder: (c, index) => homeListItem(data[index], (item) {
+                  navToPage(Browser(item.link!, item.title!));
+                }),
+                itemExtent: 100.0,
+                itemCount: data.length,
+              )),
+          empty: data.isEmpty,
+          retry: () {
+            print("retry");
+            // vm._refresh();
+            // vm.setHttpRequestState(HttpRequestState.Ready);
+            refreshController.requestRefresh();
+          });
+
+/*      if (data.isEmpty) {
+        return Center(child :CommonLoading(),);
+      }
+      return  RefreshList(
           controller: refreshController,
           onRefresh: () async {
+            print("onRefresh");
             await vm._refresh();
             refreshController.refreshCompleted();
           },
@@ -109,7 +148,8 @@ class _HomeArListPageState extends State<HomeArListPage>
             }),
             itemExtent: 100.0,
             itemCount: data.length,
-          ));
+          ));*/
+
     });
   }
 }
@@ -142,28 +182,40 @@ homeListItem(ArticleListDatas item, Function(ArticleListDatas) callback) {
                 style: const TextStyle(color: Colors.black, fontSize: 15),
               ),
             ),
-            SizedBox(height: 10,),
-          Row(children: [
-            Icon(Icons.person,color: Colors.green,),
-            Flexible(
-                child: Text(
+            SizedBox(
+              height: 10,
+            ),
+            Row(
+              children: [
+                Icon(
+                  Icons.person,
+                  color: Colors.blue,
+                ),
+                Flexible(
+                    child: Text(
                   textAlign: TextAlign.left,
                   overflow: TextOverflow.ellipsis,
                   maxLines: 1,
-                  "${item.shareUser ?? "xx"} , 分类: ${item.superChapterName ?? ""}/${item.chapterName ??""}",
+                  "${item.shareUser ?? "xx"} , 分类: ${item.superChapterName ?? ""}/${item.chapterName ?? ""}",
                   style: const TextStyle(color: Colors.black54, fontSize: 13),
                 )),
-            SizedBox(width: 8,),
-            Icon(Icons.access_time,color: Colors.green,),
-            Flexible(
-                child: Text(
+                SizedBox(
+                  width: 8,
+                ),
+                Icon(
+                  Icons.access_time,
+                  color: Colors.blue,
+                ),
+                Flexible(
+                    child: Text(
                   textAlign: TextAlign.left,
                   overflow: TextOverflow.ellipsis,
                   maxLines: 1,
                   "${item.niceDate ?? ""}",
                   style: const TextStyle(color: Colors.black54, fontSize: 13),
                 ))
-          ],),
+              ],
+            ),
           ],
         ),
       ),

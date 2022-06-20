@@ -13,8 +13,8 @@ class HttpState extends ChangeNotifier {
 
 enum HttpRequestState{
   Ready,
+  No_Data,
   Loading,
   Suc,
   Fail,
-
 }

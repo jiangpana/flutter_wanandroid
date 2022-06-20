@@ -22,22 +22,23 @@ class MineState {
     user,
   }) {
     return MineState(
-      user: user ,
+      user: user,
     );
   }
 }
 
 class MineViewModel extends BaseViewModel<MineState> {
-  MineViewModel({state}) :  super(state ?? MineState());
+  MineViewModel({state}) : super(state ?? MineState());
 
-  init(){
-    repository.get<UserEntity>(WanUrls.LOGIN).then((value){
-      if(value!=null){
+  init() {
+    repository.get<UserEntity>(WanUrls.LOGIN).then((value) {
+      if (value != null) {
         print("value!=null = $value");
-        state = MineState(user:value );
+        state = MineState(user: value);
       }
     });
   }
+
   _login() {
     navToPage(LoginPage());
   }
@@ -46,9 +47,9 @@ class MineViewModel extends BaseViewModel<MineState> {
     state = MineState(user: entity);
   }
 
-  Function? onLogout ;
+  Function? onLogout;
 
-  void _logout() async{
+  void _logout() async {
     await service.httpGet(WanUrls.LOGOUT);
     onLogout?.call();
     state = state.copyWith(user: null);
@@ -56,9 +57,11 @@ class MineViewModel extends BaseViewModel<MineState> {
   }
 
   void showDialog() {
-    showCenterDialog(content: "确定退出登录?",ok: (){
-      _logout();
-    });
+    showCenterDialog(
+        content: "确定退出登录?",
+        ok: () {
+          _logout();
+        });
   }
 }
 
@@ -79,11 +82,16 @@ class _MinePageState extends State<MinePage>
   late final homeProvider =
       StateNotifierProvider<MineViewModel, MineState>((ref) => vm);
 
-  static const String LOG_OUT = "退出登录";
+  static const String COLLECT = "收藏";
   static const String SETTING = "设置";
+  static const String LOG_OUT = "退出登录";
 
   late var items = [
     {SETTING, Icon(Icons.settings)},
+  ];
+  late var loginItems = [
+    {COLLECT, Icon(Icons.favorite)},
+    {LOG_OUT, Icon(Icons.logout)},
   ];
 
   // 注册监听器，订阅 eventbus
@@ -95,14 +103,11 @@ class _MinePageState extends State<MinePage>
     }
   });
 
-
   @override
   void initState() {
     super.initState();
     vm.init();
-    vm.onLogout=(){
-
-    };
+    vm.onLogout = () {};
   }
 
   @override
@@ -122,14 +127,14 @@ class _MinePageState extends State<MinePage>
   }
 
   Widget _mineContent(MineState data) {
-    var title=items.last.elementAt(0) as String ;
-    if(data.user!=null){
-      if(title != LOG_OUT){
-        items.add({LOG_OUT, Icon(Icons.logout)});
+    var title = items.last.elementAt(0) as String;
+    if (data.user != null) {
+      if (title != LOG_OUT) {
+        items.addAll(loginItems);
       }
-    }else{
-      if(title == LOG_OUT){
-        items.removeLast();
+    } else {
+      if (title == LOG_OUT) {
+        items.removeRange(items.length-loginItems.length, items.length);
       }
     }
     return CustomScrollView(
@@ -183,55 +188,62 @@ class _MinePageState extends State<MinePage>
                 )),
           ),
           SliverFixedExtentList(
-              delegate: SliverChildBuilderDelegate(
-                      (BuildContext context, int index) {
-                    String title = items[index].elementAt(0) as String;
-                    Icon icon = items[index].elementAt(1) as Icon;
-                    return Container(
-                        alignment: Alignment.centerLeft,
-                        child: InkWell(
-                          onTap: () {
-                            if (title == LOG_OUT) {
-                              vm.showDialog();
-                            }
-                            if (title == SETTING) {
-                              showToast("SETTING");
-                            }
-                          },
-                          child: Column(
-                            children: <Widget>[
-                              Padding(
-                                padding: const EdgeInsets.all(15),
-                                child: Row(
-                                  children: <Widget>[
-                                    const SizedBox(
-                                      width: 10,
-                                    ),
-                                    icon,
-                                    const SizedBox(
-                                      width: 10,
-                                    ),
-                                    Expanded(
-                                        child: Text(
-                                          title,
-                                          style: TextStyle(),
-                                        )),
-                                    const Icon(
-                                      Icons.arrow_forward_ios,
-                                      color: Colors.grey,
-                                      size: 18,
-                                    )
-                                  ],
+              delegate:
+                  SliverChildBuilderDelegate((BuildContext context, int index) {
+                String title = items[index].elementAt(0) as String;
+                Icon icon = items[index].elementAt(1) as Icon;
+                return Container(
+                    alignment: Alignment.centerLeft,
+                    child: InkWell(
+                      onTap: () {
+                        _onItemClick(title);
+                      },
+                      child: Column(
+                        children: <Widget>[
+                          Padding(
+                            padding: const EdgeInsets.all(15),
+                            child: Row(
+                              children: <Widget>[
+                                const SizedBox(
+                                  width: 10,
                                 ),
-                              ),
-                              const Divider(
-                                height: 2,
-                              )
-                            ],
+                                icon,
+                                const SizedBox(
+                                  width: 10,
+                                ),
+                                Expanded(
+                                    child: Text(
+                                  title,
+                                  style: TextStyle(),
+                                )),
+                                const Icon(
+                                  Icons.arrow_forward_ios,
+                                  color: Colors.grey,
+                                  size: 18,
+                                )
+                              ],
+                            ),
                           ),
-                        ));
-                  }, childCount: items.length),
+                          const Divider(
+                            height: 2,
+                          )
+                        ],
+                      ),
+                    ));
+              }, childCount: items.length),
               itemExtent: 60),
         ]);
+  }
+
+  void _onItemClick(String title) {
+    if (title == LOG_OUT) {
+      vm.showDialog();
+    }
+    if (title == SETTING) {
+      showToast("SETTING");
+    }
+    if (title == COLLECT) {
+      showToast("COLLECT");
+    }
   }
 }

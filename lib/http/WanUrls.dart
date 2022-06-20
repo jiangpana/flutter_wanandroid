@@ -19,6 +19,10 @@ class WanUrls {
   //参数：无
   static const String NAVI = BASE_URL + "navi/json";
 
+
+
+  static const String WENDA = BASE_URL + "wenda/list/";
+
   static const String HOME_LIST = BASE_URL + "article/list/";
   static const String PROJECT_NEWEST = BASE_URL + "article/listproject/";
   static const String PROJECT_CLASSIFY = BASE_URL + "project/tree/json";

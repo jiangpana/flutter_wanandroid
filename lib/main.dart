@@ -88,7 +88,7 @@ class _MainPageState extends State<MainPage> {
     sContext = context;
     return Scaffold(
       appBar: AppBar(
-        title: const Text("FlutterWanAndroid"),
+        title: const Text("WanAndroid"),
       ),
       body: PageView.builder(
         itemBuilder: (ctx, index) => mainPages[index],
@@ -117,14 +117,22 @@ class _MainPageState extends State<MainPage> {
           },
         );
       }),
-      floatingActionButton: FloatingActionButton(
+    );
+  }
+}
+
+
+/*
+
+
+    floatingActionButton: FloatingActionButton(
         onPressed: () {},
         tooltip: 'Increment',
         child: const Icon(Icons.add),
       ),
-    );
-  }
-}
+
+
+*/
 
 
 

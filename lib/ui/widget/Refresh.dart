@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
+import 'Loading.dart';
+
 
 
 class RefreshList extends StatelessWidget {
@@ -36,8 +38,8 @@ class RefreshList extends StatelessWidget {
             enablePullUp: true,
             header: CustomHeader(
               builder: (BuildContext context, RefreshStatus? mode) {
-                Widget? body;
-                if (mode == RefreshStatus.canRefresh) {
+                Widget? body = CommonLoading();
+        /*        if (mode == RefreshStatus.canRefresh) {
                   body = textIndicator("松开刷新");
                 } else if (mode == RefreshStatus.refreshing) {
                   body = textIndicator("加载中...");
@@ -45,7 +47,7 @@ class RefreshList extends StatelessWidget {
                   body = textIndicator("下拉刷新");
                 } else if (mode == RefreshStatus.completed) {
                   body = textIndicator("加载成功");
-                }
+                }*/
                 return Container(
                   padding: EdgeInsets.only(top: 6),
                   height: 76,
@@ -67,13 +69,13 @@ class RefreshList extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: const [
                         SizedBox(
+                          width: 16,
+                          height: 16,
                           child: CircularProgressIndicator(
                             valueColor:
                                 AlwaysStoppedAnimation<Color>(Colors.grey),
                             strokeWidth: 1.6,
                           ),
-                          width: 16,
-                          height: 16,
                         ),
                         Padding(padding: EdgeInsets.only(left: 10)),
                         Text("加载中...", style: TextStyle(fontSize: 12))
@@ -102,7 +104,8 @@ class RefreshList extends StatelessWidget {
     );
   }
 
-  Widget textIndicator(String statusStr) {
+
+/*  Widget textIndicator(String statusStr) {
     return Container(
       child: Stack(
         children: [
@@ -115,5 +118,5 @@ class RefreshList extends StatelessWidget {
         ],
       ),
     );
-  }
+  }*/
 }
