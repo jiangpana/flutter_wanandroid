@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_displaymode/flutter_displaymode.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -7,20 +6,13 @@ import 'package:flutter_wanandroid/ui/page/mine/Mine.dart';
 import 'package:flutter_wanandroid/ui/page/navi/Navi.dart';
 import 'package:flutter_wanandroid/ui/page/qa/Qa.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
-
 import 'http/CookieManager.dart';
 
-
-//flutter packages pub run json_model
-//flutter  packages pub run build_runner build
-
 final RouteObserver<Route<dynamic>> routeObserver = RouteObserver();
-
 late BuildContext sContext;
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
-
 
   readRunApp();
 }
@@ -29,8 +21,7 @@ void readRunApp() async {
   try {
     //设置高刷模式
     await FlutterDisplayMode.setHighRefreshRate();
-  } on Exception catch (e) {
-  }
+  } on Exception catch (e) {}
   await CookieManager.instance.initCookie();
   runApp(
     const ProviderScope(
@@ -66,7 +57,7 @@ late var mainPages = <Widget>[
 ];
 
 late var navData = [
-  {"首页", Icon(Icons.home) },
+  {"首页", Icon(Icons.home)},
   {"每日一问", Icon(Icons.question_mark)},
   {"导航", Icon(Icons.low_priority)},
   {"我的", Icon(Icons.person)},
@@ -121,7 +112,6 @@ class _MainPageState extends State<MainPage> {
   }
 }
 
-
 /*
 
 
@@ -133,8 +123,6 @@ class _MainPageState extends State<MainPage> {
 
 
 */
-
-
 
 /*
 

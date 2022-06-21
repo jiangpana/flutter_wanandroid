@@ -46,8 +46,6 @@ class _NaviPageState extends State<NaviPage>
 
   late var vm = NaviViewModel(NaviState());
 
-  late final navProvider =
-      StateNotifierProvider<NaviViewModel, NaviState>((ref) => vm);
 
   @override
   void initState() {
@@ -58,13 +56,8 @@ class _NaviPageState extends State<NaviPage>
   @override
   Widget build(BuildContext context) {
     return Consumer(builder: (_, ref, child) {
-      var data = ref.watch(navProvider).naviData;
-      var httpState = ref.watch(vm.getStateProvider()).state;
-      /*  if (data == null) {
-        return Center(
-          child: CommonLoading(),
-        );
-      }*/
+      var data = vm.getPageState(ref, vm).naviData;
+      var httpState = vm.getHttpState(ref).state;
       return statePage(
           child: ListView.builder(
               itemCount: data?.length ?? 0,
@@ -115,7 +108,7 @@ class _NaviPageState extends State<NaviPage>
                               child: Center(
                                   widthFactor: 1.1,
                                   child: Text(
-                                      data![index].articles![index2].title!)),
+                                      data[index].articles![index2].title!)),
                             ))),
                       ),
                     )

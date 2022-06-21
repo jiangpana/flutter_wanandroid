@@ -79,8 +79,6 @@ class _MinePageState extends State<MinePage>
 
   late var vm = MineViewModel();
 
-  late final homeProvider =
-      StateNotifierProvider<MineViewModel, MineState>((ref) => vm);
 
   static const String COLLECT = "收藏";
   static const String SETTING = "设置";
@@ -120,8 +118,8 @@ class _MinePageState extends State<MinePage>
   @override
   Widget build(BuildContext context) {
     eventBusFn.isPaused;
-    return Consumer(builder: (context, watch, _) {
-      var data = watch.watch(homeProvider);
+    return Consumer(builder: (context, ref, _) {
+      var data =vm.getPageState(ref, vm);
       return _mineContent(data);
     });
   }

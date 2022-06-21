@@ -82,8 +82,6 @@ class _QaPageState extends State<QaPage> with AutomaticKeepAliveClientMixin {
 
   late var vm = QaViewModel(QaState.initial());
 
-  late final homeProvider =
-      StateNotifierProvider<QaViewModel, QaState>((ref) => vm);
 
   @override
   void initState() {
@@ -95,8 +93,8 @@ class _QaPageState extends State<QaPage> with AutomaticKeepAliveClientMixin {
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    return Consumer(builder: (context, watch, _) {
-      var data = watch.watch(homeProvider).datas;
+    return Consumer(builder: (context, ref, _) {
+      var data = vm.getPageState(ref, vm).datas;
       return refreshListStatePage(
           child: RefreshList(
               controller: refreshController,

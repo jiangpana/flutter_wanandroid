@@ -21,8 +21,7 @@ class HomePageState {
   HomePageState.initial()
       :datas = <ArticleListDatas>[];
 
-  HomePageState(
-      { required this.datas, this.articleListEntity});
+  HomePageState({ required this.datas, this.articleListEntity});
 
   HomePageState copyWith({
     datas,
@@ -35,33 +34,41 @@ class HomePageState {
   }
 
   int getNextPage() {
-  return articleListEntity?.curPage ?? 0;
+    return articleListEntity?.curPage ?? 0;
   }
 
   void refresh() {
-    articleListEntity =null;
+    articleListEntity = null;
   }
 }
 
 class HomeVm extends BaseViewModel<HomePageState> {
   HomeVm([HomePageState? state]) : super(state ?? HomePageState.initial()) {}
 
+
+  late final homePageNotifier = newNotifier(HomePageState.initial());
+  HomePageState get _homeState => homePageNotifier.state;
+  set _homeState(HomePageState state){
+    homePageNotifier.state = state;
+  }
+
   _request() async {
     var value = await service.httpGet<ArticleListEntity>(
-        "${WanUrls.HOME_LIST}${state.getNextPage()}/json");
+        "${WanUrls.HOME_LIST}${ _homeState.getNextPage()}/json");
     if (value != null) {
       if (value.curPage == 1) {
-        state.datas.clear();
+        _homeState.datas.clear();
       }
       var data = <ArticleListDatas>[];
-      data.addAll(state.datas);
+      data.addAll( _homeState.datas);
       data.addAll(value.datas ?? []);
-      state = state.copyWith(datas: data ,articleListEntity:value);
+      _homeState =
+          _homeState.copyWith(datas: data, articleListEntity: value);
     }
   }
 
   _refresh() async {
-    state.refresh();
+    _homeState.refresh();
     await _request();
   }
 
@@ -82,9 +89,6 @@ class _HomeArListPageState extends State<HomeArListPage>
   late var refreshController = RefreshController();
   late var vm = HomeVm();
 
-  late final homeProvider =
-      StateNotifierProvider<HomeVm, HomePageState>((ref) => vm);
-
   @override
   bool get wantKeepAlive => true;
 
@@ -99,8 +103,9 @@ class _HomeArListPageState extends State<HomeArListPage>
   Widget build(BuildContext context) {
     super.build(context);
     return Consumer(builder: (context, ref, _) {
-      var data = ref.watch(homeProvider).datas;
-      // var httpState = ref.watch(vm.getStateProvider()).state;
+      var data = vm.homePageNotifier
+          .watch(ref)
+          .datas;
       return refreshListStatePage(
           child: RefreshList(
               controller: refreshController,
@@ -114,9 +119,10 @@ class _HomeArListPageState extends State<HomeArListPage>
                 refreshController.loadComplete();
               },
               content: ListView.builder(
-                itemBuilder: (c, index) => homeListItem(data[index], (item) {
-                  navToPage(Browser(item.link!, item.title!));
-                }),
+                itemBuilder: (c, index) =>
+                    homeListItem(data[index], (item) {
+                      navToPage(Browser(item.link!, item.title!));
+                    }),
                 itemExtent: 100.0,
                 itemCount: data.length,
               )),
@@ -193,12 +199,14 @@ homeListItem(ArticleListDatas item, Function(ArticleListDatas) callback) {
                 ),
                 Flexible(
                     child: Text(
-                  textAlign: TextAlign.left,
-                  overflow: TextOverflow.ellipsis,
-                  maxLines: 1,
-                  "${item.shareUser ?? "xx"} , 分类: ${item.superChapterName ?? ""}/${item.chapterName ?? ""}",
-                  style: const TextStyle(color: Colors.black54, fontSize: 13),
-                )),
+                      textAlign: TextAlign.left,
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 1,
+                      "${item.shareUser ?? "xx"} , 分类: ${item
+                          .superChapterName ?? ""}/${item.chapterName ?? ""}",
+                      style: const TextStyle(
+                          color: Colors.black54, fontSize: 13),
+                    )),
                 SizedBox(
                   width: 8,
                 ),
@@ -208,12 +216,13 @@ homeListItem(ArticleListDatas item, Function(ArticleListDatas) callback) {
                 ),
                 Flexible(
                     child: Text(
-                  textAlign: TextAlign.left,
-                  overflow: TextOverflow.ellipsis,
-                  maxLines: 1,
-                  "${item.niceDate ?? ""}",
-                  style: const TextStyle(color: Colors.black54, fontSize: 13),
-                ))
+                      textAlign: TextAlign.left,
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 1,
+                      "${item.niceDate ?? ""}",
+                      style: const TextStyle(
+                          color: Colors.black54, fontSize: 13),
+                    ))
               ],
             ),
           ],

@@ -8,10 +8,6 @@ Widget statePage(
   switch (state) {
     case HttpRequestState.Ready:
       return Center(child: Text(""));
-    case HttpRequestState.No_Data:
-      return Center(
-        child: Text("暂无数据"),
-      );
     case HttpRequestState.Loading:
       return Center(child: CommonLoading());
     case HttpRequestState.Suc:

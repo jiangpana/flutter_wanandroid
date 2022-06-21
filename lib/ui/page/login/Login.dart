@@ -34,6 +34,8 @@ class LoginViewModel extends BaseViewModel<LoginPageState> {
   LoginViewModel({state})
       : super(state ?? LoginPageState(user: '', pwd: '', rep: ''));
 
+
+
   _register() async {
     var rep =
         await service.httpPost<UserEntity>(WanUrls.REGISTER, queryParameters: {
@@ -108,8 +110,8 @@ class _LoginPageState extends State<LoginPage> with RouteAware {
   @override
   Widget build(BuildContext context) {
     return Consumer(builder: (_, ref, child) {
-      var httpState = ref.watch(vm.getStateProvider()).state;
-      var message = ref.watch(vm.getStateProvider()).message;
+      var httpState = vm.getHttpState(ref).state;
+      var message = vm.getHttpState(ref).message;
       print("httpState = $httpState");
       print("message = $message");
       var state = ref.watch(loginProvider);
