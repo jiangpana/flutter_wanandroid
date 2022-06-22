@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_wanandroid/base/BaseViewModel.dart';
+import 'package:flutter_wanandroid/base/vm/BaseViewModel.dart';
 import 'package:flutter_wanandroid/data/entity/navi_entity.dart';
 import 'package:flutter_wanandroid/ext/NavExt.dart';
 import 'package:flutter_wanandroid/http/WanUrls.dart';
@@ -23,13 +23,20 @@ class NaviState {
   }
 }
 
-class NaviViewModel extends BaseViewModel<NaviState> {
-  NaviViewModel(super.state);
+class NaviViewModel extends BaseViewModel {
+
+  late final naviPageNotifier = newNotifier(NaviState());
+  NaviState get _minePageState => naviPageNotifier.state;
+  set _minePageState(NaviState state) {
+    naviPageNotifier.state = state;
+  }
+
+
 
   void init() {
     var data = service.httpListGet<NaviEntity>(WanUrls.NAVI);
     data.then((value) {
-      state = state.copyWith(naviData: value);
+      _minePageState = _minePageState.copyWith(naviData: value);
     });
   }
 }
@@ -44,7 +51,7 @@ class _NaviPageState extends State<NaviPage>
   @override
   bool get wantKeepAlive => true;
 
-  late var vm = NaviViewModel(NaviState());
+  late var vm = NaviViewModel();
 
 
   @override
@@ -56,7 +63,7 @@ class _NaviPageState extends State<NaviPage>
   @override
   Widget build(BuildContext context) {
     return Consumer(builder: (_, ref, child) {
-      var data = vm.getPageState(ref, vm).naviData;
+      var data = vm.naviPageNotifier.watch(ref).naviData;
       var httpState = vm.getHttpState(ref).state;
       return statePage(
           child: ListView.builder(

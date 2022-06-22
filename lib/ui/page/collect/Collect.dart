@@ -1,26 +1,27 @@
-import 'package:flutter/foundation.dart';
+
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_wanandroid/ext/NavExt.dart';
-import 'package:flutter_wanandroid/ui/page/home/state/HomePageState.dart';
-import 'package:flutter_wanandroid/ui/widget/StatePage.dart';
+import 'package:flutter_wanandroid/data/entity/collect_entity.dart';
+import 'package:flutter_wanandroid/ui/page/collect/state/collect_state.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 import '../../../base/vm/BaseViewModel.dart';
-import '../../../data/entity/article_list_entity.dart';
+import '../../../ext/NavExt.dart';
 import '../../../http/WanUrls.dart';
 import '../../widget/Browser.dart';
 import '../../widget/Refresh.dart';
+import '../../widget/StatePage.dart';
 
-class HomeVm extends BaseViewModel {
+class CollectVm extends BaseViewModel {
 
   late var refreshController = RefreshController();
 
-  late final homePageNotifier = newNotifier(HomePageState());
-  HomePageState get _homeState => homePageNotifier.state;
+  late final collectPageNotifier = newNotifier(CollectPageState());
+  CollectPageState get _collectState => collectPageNotifier.state;
 
-  set _homeState(HomePageState state) {
-    homePageNotifier.state = state;
+  set _collectState(CollectPageState state) {
+    collectPageNotifier.state = state;
   }
 
 
@@ -49,40 +50,40 @@ class HomeVm extends BaseViewModel {
 
 
   int _getNextPage() {
-    return _homeState.articleListEntity?.curPage ?? 0;
+    return _collectState.collectEntity?.curPage ?? 0;
   }
 
-   _refresh() {
-    _homeState.articleListEntity?.curPage = 0;
+  _refresh() {
+    _collectState.collectEntity?.curPage = 0;
   }
 
 
 
   _request() async {
-    var value = await service.httpGet<ArticleListEntity>(
-        "${WanUrls.HOME_LIST}${_getNextPage()}/json");
+    var value = await service.httpGet<CollectEntity>(
+        "${WanUrls.COLLECTED_ARTICLE}${_getNextPage()}/json");
     if (value != null) {
-      var data = <ArticleListDatas>[];
-      data.addAll(_homeState.datas);
+      var data = <CollectDatas>[];
+      data.addAll(_collectState.datas);
       if (value.curPage == 1) {
         data.clear();
       }
       data.addAll(value.datas ?? []);
-      _homeState = _homeState.copyWith(datas: data, articleListEntity: value);
+      _collectState = _collectState.copyWith(datas: data, collectEntity: value);
     }
   }
 }
 
-class HomeArListPage extends StatefulWidget {
-  HomeArListPage({Key? key}) : super(key: key);
+class CollectPage extends StatefulWidget {
+  CollectPage({Key? key}) : super(key: key);
 
   @override
-  _HomeArListPageState createState() => _HomeArListPageState();
+  _CollectPageState createState() => _CollectPageState();
 }
 
-class _HomeArListPageState extends State<HomeArListPage>
+class _CollectPageState extends State<CollectPage>
     with AutomaticKeepAliveClientMixin {
-  late var vm = HomeVm();
+  late var vm = CollectVm();
 
   @override
   bool get wantKeepAlive => true;
@@ -96,8 +97,18 @@ class _HomeArListPageState extends State<HomeArListPage>
   @override
   Widget build(BuildContext context) {
     super.build(context);
+    return Scaffold(
+        appBar: AppBar(
+          title: Text("收藏"),
+        ),
+        body: _CollectContent());
+  }
+
+  _CollectContent() {
     return Consumer(builder: (context, ref, _) {
-      var data = vm.homePageNotifier.watch(ref).datas;
+      var data = vm.collectPageNotifier
+          .watch(ref)
+          .datas;
       var httpState = vm.getHttpState(ref);
       return refreshListStatePage(
           child: RefreshList(
@@ -109,9 +120,10 @@ class _HomeArListPageState extends State<HomeArListPage>
                 await vm.loadMore();
               },
               content: ListView.builder(
-                itemBuilder: (c, index) => homeListItem(data[index], (item) {
-                  navToPage(Browser(item.link!, item.title!));
-                }),
+                itemBuilder: (c, index) =>
+                    collectListItem(data[index], (item) {
+                      navToPage(Browser(item.link!, item.title!));
+                    }),
                 itemExtent: 100.0,
                 itemCount: data.length,
               )),
@@ -122,8 +134,7 @@ class _HomeArListPageState extends State<HomeArListPage>
     });
   }
 }
-
-homeListItem(ArticleListDatas item, Function(ArticleListDatas) itemClick) {
+collectListItem(CollectDatas item, Function(CollectDatas) itemClick) {
   return InkWell(
     onTap: () {
       itemClick.call(item);
@@ -162,12 +173,12 @@ homeListItem(ArticleListDatas item, Function(ArticleListDatas) itemClick) {
                 ),
                 Flexible(
                     child: Text(
-                  textAlign: TextAlign.left,
-                  overflow: TextOverflow.ellipsis,
-                  maxLines: 1,
-                  "${item.shareUser ?? "xx"} , 分类: ${item.superChapterName ?? ""}/${item.chapterName ?? ""}",
-                  style: const TextStyle(color: Colors.black54, fontSize: 13),
-                )),
+                      textAlign: TextAlign.left,
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 1,
+                      "${item.author ?? "xx"} , 分类: ${item.chapterName ?? ""}",
+                      style: const TextStyle(color: Colors.black54, fontSize: 13),
+                    )),
                 SizedBox(
                   width: 8,
                 ),
@@ -177,12 +188,12 @@ homeListItem(ArticleListDatas item, Function(ArticleListDatas) itemClick) {
                 ),
                 Flexible(
                     child: Text(
-                  textAlign: TextAlign.left,
-                  overflow: TextOverflow.ellipsis,
-                  maxLines: 1,
-                  "${item.niceDate ?? ""}",
-                  style: const TextStyle(color: Colors.black54, fontSize: 13),
-                ))
+                      textAlign: TextAlign.left,
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 1,
+                      "${item.niceDate ?? ""}",
+                      style: const TextStyle(color: Colors.black54, fontSize: 13),
+                    ))
               ],
             ),
           ],

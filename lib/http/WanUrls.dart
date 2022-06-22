@@ -37,6 +37,8 @@ class WanUrls {
   static const String AVATAR_CODING =
       "https://coding.net/static/fruit_avatar/Fruit-";
   static const String AVATAR_LEGO = "https://randomuser.me/api/portraits/lego/";
+  //方法：GET
+  // 参数： 页码：拼接在链接中，从0开始。
   static const String COLLECTED_ARTICLE = BASE_URL + "lg/collect/list/";
   static const String COLLECT_IN_ARTICLE = BASE_URL + "lg/collect/";
   static const String COLLECT_OUT_ARTICLE = BASE_URL + "lg/collect/add/json";

@@ -1,24 +1,24 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_wanandroid/ui/page/home/Home.dart';
 
-import '../data/LocalRepository.dart';
-import '../http/WanService.dart';
-import 'BaseState.dart';
+import '../../data/LocalRepository.dart';
+import '../../http/WanService.dart';
+import '../BaseState.dart';
 
-class BaseViewModel<T> extends StateNotifier<T> {
-  BaseViewModel(super.state);
+abstract class BaseViewModel {
+  BaseViewModel();
 
   late final LocalRepository repository = LocalRepository();
   late final WanAndroidService service = WanAndroidService(this);
   late final HttpState _httpState = HttpState();
 
-  HttpState getHttpState(WidgetRef ref) =>
-      ref.watch(ChangeNotifierProvider((_) => _httpState));
+  get httpState=>_httpState;
 
-  T getPageState<V extends StateNotifier<T>>(WidgetRef ref, V vm) {
-    var provider = StateNotifierProvider<V, T>((ref) => vm);
-    return ref.watch(provider);
-  }
+  late final  _httpStateProvider =ChangeNotifierProvider((_) => _httpState);
+
+  HttpState getHttpState(WidgetRef ref) =>
+      ref.watch(_httpStateProvider);
+
 
   setHttpRequestState(HttpRequestState state, {String? message}) {
     _httpState.setHttpRequestState(state, message: message);

@@ -5,7 +5,7 @@ import 'package:flutter_wanandroid/ext/NavExt.dart';
 import 'package:flutter_wanandroid/http/WanUrls.dart';
 
 import '../../../base/BaseState.dart';
-import '../../../base/BaseViewModel.dart';
+import '../../../base/vm/BaseViewModel.dart';
 import '../../../ext/EventBusExt.dart';
 import '../../../main.dart';
 import '../mine/Mine.dart';
@@ -30,29 +30,32 @@ class LoginPageState {
   }
 }
 
-class LoginViewModel extends BaseViewModel<LoginPageState> {
-  LoginViewModel({state})
-      : super(state ?? LoginPageState(user: '', pwd: '', rep: ''));
+class LoginViewModel extends BaseViewModel{
 
+
+  late final loginPageNotifier = newNotifier(LoginPageState(user: '', pwd: '', rep: ''));
+  LoginPageState get _loginPageState => loginPageNotifier.state;
+
+  set _loginPageState(LoginPageState state) {
+    loginPageNotifier.state = state;
+  }
 
 
   _register() async {
     var rep =
         await service.httpPost<UserEntity>(WanUrls.REGISTER, queryParameters: {
-      "username": state.user,
-      "password": state.pwd,
-      "repassword": state.pwd,
+      "username": _loginPageState.user,
+      "password": _loginPageState.pwd,
+      "repassword": _loginPageState.pwd,
     });
-    state = state.copyWith(rep: rep.toString() + "222");
+    _loginPageState = _loginPageState.copyWith(rep: rep.toString() );
   }
 
   _login() async {
     var rep =
         await service.httpPost<UserEntity>(WanUrls.LOGIN, queryParameters: {
-      // "username": state.user,
-      "username": "11111111111y放1",
-      // "password": state.pwd,
-      "password": "eeeeeee",
+      "username": _loginPageState.user,
+      "password": _loginPageState.pwd,
     });
     if (rep != null) {
       eventBus.fire(EventFn({
@@ -72,8 +75,6 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> with RouteAware {
   late LoginViewModel vm = LoginViewModel();
-  late final loginProvider =
-      StateNotifierProvider<LoginViewModel, LoginPageState>((ref) => vm);
 
   @override
   void didPopNext() {
@@ -110,74 +111,74 @@ class _LoginPageState extends State<LoginPage> with RouteAware {
   @override
   Widget build(BuildContext context) {
     return Consumer(builder: (_, ref, child) {
-      var httpState = vm.getHttpState(ref).state;
-      var message = vm.getHttpState(ref).message;
-      print("httpState = $httpState");
-      print("message = $message");
-      var state = ref.watch(loginProvider);
       return Scaffold(
           appBar: AppBar(
             title: Text("登录/注册"),
           ),
-          body: LoginContent(httpState, state, vm,message));
+          body: _LoginContent(vm,ref));
     });
+  }
+
+  _LoginContent(
+      LoginViewModel vm, WidgetRef ref) {
+    var httpState = vm.getHttpState(ref).state;
+    var message = vm.getHttpState(ref).message;
+    var state = vm.loginPageNotifier.watch(ref);
+    Widget hint = Text(
+      message??"",
+      style: TextStyle(color: Colors.red),
+    );
+    if (httpState == HttpRequestState.Loading) {
+      hint = CircularProgressIndicator();
+    }
+    return ListView(
+      children: [
+        Padding(
+          padding: EdgeInsets.all(20),
+          child: Column(
+            children: [
+              TextField(
+                // controller: TextEditingController(text :"11111111111y放1"),
+                onChanged: (user) {
+                  print(user);
+                  state.user = user;
+                },
+                decoration: InputDecoration(
+                  icon: Icon(Icons.person),
+                ),
+              ),
+              TextField(
+                // controller: TextEditingController(text :"eeeeeee"),
+                onChanged: (pwd) {
+                  state.pwd = pwd;
+                },
+                decoration: InputDecoration(
+                  icon: Icon(Icons.password),
+                ),
+                obscureText: true,
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  TextButton(
+                      onPressed: () {
+                        vm._register();
+                      },
+                      child: Text("注册")),
+                  TextButton(
+                      onPressed: () {
+                        vm._login();
+                      },
+                      child: Text("登录"))
+                ],
+              ),
+              hint
+            ],
+          ),
+        )
+      ],
+    );
   }
 }
 
-LoginContent(
-    HttpRequestState httpState, LoginPageState state, LoginViewModel vm,String? message) {
-  Widget hint = Text(
-    message??"",
-    style: TextStyle(color: Colors.red),
-  );
-  if (httpState == HttpRequestState.Loading) {
-    hint = CircularProgressIndicator();
-  }
-  return ListView(
-    children: [
-      Padding(
-        padding: EdgeInsets.all(20),
-        child: Column(
-          children: [
-            TextField(
-              controller: TextEditingController(text :"11111111111y放1"),
-              onChanged: (user) {
-                print(user);
-                state.user = user;
-              },
-              decoration: InputDecoration(
-                icon: Icon(Icons.person),
-              ),
-            ),
-            TextField(
-              controller: TextEditingController(text :"eeeeeee"),
-              onChanged: (pwd) {
-                state.pwd = pwd;
-              },
-              decoration: InputDecoration(
-                icon: Icon(Icons.password),
-              ),
-              obscureText: true,
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                TextButton(
-                    onPressed: () {
-                      vm._register();
-                    },
-                    child: Text("注册")),
-                TextButton(
-                    onPressed: () {
-                      vm._login();
-                    },
-                    child: Text("登录"))
-              ],
-            ),
-            hint
-          ],
-        ),
-      )
-    ],
-  );
-}
+

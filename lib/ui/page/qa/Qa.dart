@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_wanandroid/base/BaseViewModel.dart';
+import 'package:flutter_wanandroid/base/vm/BaseViewModel.dart';
 import 'package:flutter_wanandroid/http/WanUrls.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
@@ -23,7 +23,7 @@ class QaState {
   QaState({ this.wendaEntity, required this.datas});
 
   int getNextPage() {
-    return wendaEntity?.curPage ?? 0;
+    return wendaEntity == null ? 0 :wendaEntity!.curPage!+1;
   }
 
   void refresh() {
@@ -41,31 +41,54 @@ class QaState {
   }
 }
 
-class QaViewModel extends BaseViewModel<QaState> {
-  QaViewModel(super.state);
+class QaViewModel extends BaseViewModel {
+
+  late var refreshController = RefreshController();
+
+  late final qaPageNotifier = newNotifier(QaState.initial());
+  QaState get _qaState => qaPageNotifier.state;
+
+  set _qaState(QaState state) {
+    qaPageNotifier.state = state;
+  }
+
+
+
+  refresh() async {
+    _qaState.refresh();
+    await _request();
+    if(httpState.isFail()){
+      refreshController.refreshFailed();
+    }else{
+      refreshController.refreshCompleted();
+    }
+  }
+
+  loadMore() async {
+    await _request();
+    if(httpState.isFail()){
+      refreshController.loadFailed();
+    }else{
+      refreshController.loadComplete();
+    }
+  }
+
+  void retry() {
+    refreshController.requestRefresh();
+  }
 
   _request() async {
-
     var value = await service
-        .httpGet<WendaEntity>("${WanUrls.WENDA}${state.getNextPage()}/json");
-   if(value !=null){
-     if (value.curPage == 1) {
-       state.datas.clear();
-     }
-     var data = <WendaDatas>[];
-     data.addAll(state.datas);
-     data.addAll(value.datas!);
-     state = state.copyWith(datas: data,wendaEntity: value);
-   }
-  }
-
-  _refresh() async {
-    state.refresh();
-    await _request();
-  }
-
-  _loadMore() async {
-    await _request();
+        .httpGet<WendaEntity>("${WanUrls.WENDA}${_qaState.getNextPage()}/json");
+    if(value !=null){
+      var data = <WendaDatas>[];
+      data.addAll(_qaState.datas);
+      if (value.curPage == 0) {
+        data.clear();
+      }
+      data.addAll(value.datas??[]);
+      _qaState = _qaState.copyWith(datas: data,wendaEntity: value);
+    }
   }
 }
 
@@ -78,33 +101,32 @@ class _QaPageState extends State<QaPage> with AutomaticKeepAliveClientMixin {
   @override
   bool get wantKeepAlive => true;
 
-  late var refreshController = RefreshController();
 
-  late var vm = QaViewModel(QaState.initial());
+
+  late var vm = QaViewModel();
 
 
   @override
   void initState() {
     super.initState();
     // 初始化
-    vm._refresh();
+    vm.refresh();
   }
 
   @override
   Widget build(BuildContext context) {
     super.build(context);
     return Consumer(builder: (context, ref, _) {
-      var data = vm.getPageState(ref, vm).datas;
+      var data = vm.qaPageNotifier.watch(ref).datas;
+      var httpState = vm.getHttpState(ref);
       return refreshListStatePage(
           child: RefreshList(
-              controller: refreshController,
+              controller: vm.refreshController,
               onRefresh: () async {
-                await vm._refresh();
-                refreshController.refreshCompleted();
+                await vm.refresh();
               },
               onLoading: () async {
-                await vm._loadMore();
-                refreshController.loadComplete();
+                await vm.loadMore();
               },
               content: ListView.builder(
                 itemBuilder: (c, index) => homeListItem(data[index], (item) {
@@ -113,12 +135,9 @@ class _QaPageState extends State<QaPage> with AutomaticKeepAliveClientMixin {
                 itemExtent: 100.0,
                 itemCount: data.length,
               )),
-          empty: data.isEmpty,
+          fail: httpState.isFail(),
           retry: () {
-            print("retry");
-            // vm._refresh();
-            // vm.setHttpRequestState(HttpRequestState.Ready);
-            refreshController.requestRefresh();
+            vm.retry();
           });
     });
   }

@@ -1,7 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_wanandroid/generated/json/base/json_convert_content.dart';
 import '../base/BaseState.dart';
-import '../base/BaseViewModel.dart';
+import '../base/vm/BaseViewModel.dart';
 import '../data/LocalRepository.dart';
 import 'HttpDio.dart';
 import 'base/base_entity.dart';

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_wanandroid/base/BaseState.dart';
 
+import '../../ext/NetStateExt.dart';
 import 'Loading.dart';
 
 Widget statePage(
@@ -29,59 +30,31 @@ Widget statePage(
 }
 
 
-/*
-
-     return refreshListStatePage(
-          child: RefreshList(
-              controller: refreshController,
-              onRefresh: () async {
-                print("onRefresh");
-                await vm._refresh();
-                refreshController.refreshCompleted();
-              },
-              onLoading: () async {
-                await vm._loadMore();
-                refreshController.loadComplete();
-              },
-              content: ListView.builder(
-                itemBuilder: (c, index) => homeListItem(data[index], (item) {
-                  navToPage(Browser(item.link!, item.title!));
-                }),
-                itemExtent: 100.0,
-                itemCount: data.length,
-              )),
-          state: httpState,
-          retry: () {
-            print("retry");
-            // vm._refresh();
-            // vm.setHttpRequestState(HttpRequestState.Ready);
-            refreshController.requestRefresh();
-          });
-
-*/
 Widget refreshListStatePage(
-    {required Widget child, required bool empty, Function? retry}) {
+    {required Widget child, required bool fail, Function? retry}) {
   var items = [child];
-  if (empty) {
+/*  if (fail) {
     items.add(Align(
-      alignment: Alignment.center,
+      alignment: Alignment.bottomRight,
       child: Container(
         padding: EdgeInsets.all(4),
+        margin: EdgeInsets.all(10),
+        decoration: BoxDecoration(color:Colors.red ,shape:BoxShape.circle),
         child: Column(
-          mainAxisSize: MainAxisSize.max,
+          mainAxisSize: MainAxisSize.min,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.no_adult_content,color: Colors.black,),
+            Icon(Icons.no_adult_content,color: Colors.white,),
             TextButton(
                 onPressed: () {
                   retry?.call();
                 },
-                child: Text("没有数据 , 点击刷新 ",style:TextStyle(color: Colors.black) ))
+                child: Text("刷新 ",style:TextStyle(color: Colors.white) ))
           ],
         ),
       ),
     ));
-  }
+  }*/
   return Stack(
     children: items,
   );

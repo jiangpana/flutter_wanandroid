@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_wanandroid/ext/NavExt.dart';
+import 'package:flutter_wanandroid/ui/page/collect/Collect.dart';
 import 'package:flutter_wanandroid/ui/page/login/Login.dart';
 
-import '../../../base/BaseViewModel.dart';
+import '../../../base/vm/BaseViewModel.dart';
 import '../../../data/entity/navi_entity.dart';
 import '../../../data/entity/user_entity.dart';
 import '../../../ext/EventBusExt.dart';
@@ -27,24 +28,35 @@ class MineState {
   }
 }
 
-class MineViewModel extends BaseViewModel<MineState> {
-  MineViewModel({state}) : super(state ?? MineState());
+class MineViewModel extends BaseViewModel {
+  late final minePageNotifier = newNotifier(MineState());
+
+  MineState get _minePageState => minePageNotifier.state;
+
+  set _minePageState(MineState state) {
+    minePageNotifier.state = state;
+  }
+
+  // 注册监听器，订阅 eventbus
+  late final _onLogin = eventBus.on<EventFn>().listen((event) {
+    var data = event.obj as Map<String, dynamic>;
+    if (data[LOGIN_RESULT_SUC] != null) {
+      var entity = data[LOGIN_RESULT_SUC] as UserEntity;
+      _minePageState = _minePageState.copyWith(user: entity);
+    }
+  });
 
   init() {
+    _onLogin.resume();
     repository.get<UserEntity>(WanUrls.LOGIN).then((value) {
       if (value != null) {
-        print("value!=null = $value");
-        state = MineState(user: value);
+        _minePageState =  _minePageState.copyWith(user: value);
       }
     });
   }
 
-  _login() {
+  void _login() {
     navToPage(LoginPage());
-  }
-
-  setUserEntity(entity) {
-    state = MineState(user: entity);
   }
 
   Function? onLogout;
@@ -52,7 +64,7 @@ class MineViewModel extends BaseViewModel<MineState> {
   void _logout() async {
     await service.httpGet(WanUrls.LOGOUT);
     onLogout?.call();
-    state = state.copyWith(user: null);
+    _minePageState = _minePageState.copyWith(user: null);
     repository.remove(WanUrls.LOGIN);
   }
 
@@ -62,6 +74,10 @@ class MineViewModel extends BaseViewModel<MineState> {
         ok: () {
           _logout();
         });
+  }
+
+  void dispose() {
+    _onLogin.cancel();
   }
 }
 
@@ -78,12 +94,9 @@ class _MinePageState extends State<MinePage>
   bool get wantKeepAlive => true;
 
   late var vm = MineViewModel();
-
-
   static const String COLLECT = "收藏";
   static const String SETTING = "设置";
   static const String LOG_OUT = "退出登录";
-
   late var items = [
     {SETTING, Icon(Icons.settings)},
   ];
@@ -91,15 +104,6 @@ class _MinePageState extends State<MinePage>
     {COLLECT, Icon(Icons.favorite)},
     {LOG_OUT, Icon(Icons.logout)},
   ];
-
-  // 注册监听器，订阅 eventbus
-  late var eventBusFn = eventBus.on<EventFn>().listen((event) {
-    var data = event.obj as Map<String, dynamic>;
-    if (data[LOGIN_RESULT_SUC] != null) {
-      var entity = data[LOGIN_RESULT_SUC] as UserEntity;
-      vm.setUserEntity(entity);
-    }
-  });
 
   @override
   void initState() {
@@ -112,19 +116,18 @@ class _MinePageState extends State<MinePage>
   void dispose() {
     super.dispose();
     //取消订阅
-    eventBusFn.cancel();
+    vm.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    eventBusFn.isPaused;
     return Consumer(builder: (context, ref, _) {
-      var data =vm.getPageState(ref, vm);
+      var data = vm.minePageNotifier.watch(ref);
       return _mineContent(data);
     });
   }
 
-  Widget _mineContent(MineState data) {
+   _mineContent(MineState data) {
     var title = items.last.elementAt(0) as String;
     if (data.user != null) {
       if (title != LOG_OUT) {
@@ -132,7 +135,7 @@ class _MinePageState extends State<MinePage>
       }
     } else {
       if (title == LOG_OUT) {
-        items.removeRange(items.length-loginItems.length, items.length);
+        items.removeRange(items.length - loginItems.length, items.length);
       }
     }
     return CustomScrollView(
@@ -155,26 +158,7 @@ class _MinePageState extends State<MinePage>
                       Icons.person,
                       color: Colors.white,
                       size: 60,
-                    )
-                    /*           data.user == null
-                      ? const Icon(
-                          Icons.person,
-                          color: Colors.white,
-                          size: 60,
-                        )
-                      : Container(
-                          width: 60.0,
-                          height: 60.0,
-                          decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: Colors.transparent,
-                              image: DecorationImage(
-                                  image: NetworkImage(data.userAvatar!),
-                                  fit: BoxFit.cover),
-                              border:
-                                  Border.all(color: Colors.white, width: 2.0)),
-                        )*/
-                    ,
+                    ),
                     Container(
                       margin: const EdgeInsets.fromLTRB(0.0, 10.0, 0.0, 0.0),
                       child: Text(
@@ -241,7 +225,27 @@ class _MinePageState extends State<MinePage>
       showToast("SETTING");
     }
     if (title == COLLECT) {
-      showToast("COLLECT");
+      navToPage(CollectPage());
     }
   }
 }
+
+
+/*           data.user == null
+                      ? const Icon(
+                          Icons.person,
+                          color: Colors.white,
+                          size: 60,
+                        )
+                      : Container(
+                          width: 60.0,
+                          height: 60.0,
+                          decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: Colors.transparent,
+                              image: DecorationImage(
+                                  image: NetworkImage(data.userAvatar!),
+                                  fit: BoxFit.cover),
+                              border:
+                                  Border.all(color: Colors.white, width: 2.0)),
+                        )*/

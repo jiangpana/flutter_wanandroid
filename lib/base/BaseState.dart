@@ -9,6 +9,8 @@ class HttpState extends ChangeNotifier {
     this.state = state;
     notifyListeners();
   }
+
+ bool isFail()=>state==HttpRequestState.Fail;
 }
 
 enum HttpRequestState{
