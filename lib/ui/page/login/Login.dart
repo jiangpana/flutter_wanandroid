@@ -4,7 +4,7 @@ import 'package:flutter_wanandroid/data/entity/user_entity.dart';
 import 'package:flutter_wanandroid/ext/NavExt.dart';
 import 'package:flutter_wanandroid/http/WanUrls.dart';
 
-import '../../../base/BaseState.dart';
+import '../../../base/state/BaseState.dart';
 import '../../../base/vm/BaseViewModel.dart';
 import '../../../ext/EventBusExt.dart';
 import '../../../main.dart';
@@ -30,28 +30,27 @@ class LoginPageState {
   }
 }
 
-class LoginViewModel extends BaseViewModel{
+class LoginViewModel extends BaseViewModel {
+  late final loginPageNotifier =
+      newNotifier(LoginPageState(user: '', pwd: '', rep: ''));
 
-
-  late final loginPageNotifier = newNotifier(LoginPageState(user: '', pwd: '', rep: ''));
   LoginPageState get _loginPageState => loginPageNotifier.state;
 
   set _loginPageState(LoginPageState state) {
     loginPageNotifier.state = state;
   }
 
-
-  _register() async {
+  register() async {
     var rep =
         await service.httpPost<UserEntity>(WanUrls.REGISTER, queryParameters: {
       "username": _loginPageState.user,
       "password": _loginPageState.pwd,
       "repassword": _loginPageState.pwd,
     });
-    _loginPageState = _loginPageState.copyWith(rep: rep.toString() );
+    _loginPageState = _loginPageState.copyWith(rep: rep.toString());
   }
 
-  _login() async {
+  login() async {
     var rep =
         await service.httpPost<UserEntity>(WanUrls.LOGIN, queryParameters: {
       "username": _loginPageState.user,
@@ -113,46 +112,43 @@ class _LoginPageState extends State<LoginPage> with RouteAware {
     return Consumer(builder: (_, ref, child) {
       return Scaffold(
           appBar: AppBar(
-            title: Text("登录/注册"),
+            title: const Text("登录/注册"),
           ),
-          body: _LoginContent(vm,ref));
+          body: _loginContent(vm, ref));
     });
   }
 
-  _LoginContent(
-      LoginViewModel vm, WidgetRef ref) {
-    var httpState = vm.getHttpState(ref).state;
-    var message = vm.getHttpState(ref).message;
+  _loginContent(LoginViewModel vm, WidgetRef ref) {
+
     var state = vm.loginPageNotifier.watch(ref);
+    var httpState = vm.watchHttpState(ref).state;
+    var message = vm.watchHttpState(ref).message;
     Widget hint = Text(
-      message??"",
-      style: TextStyle(color: Colors.red),
+      message ?? "",
+      style: const TextStyle(color: Colors.red),
     );
     if (httpState == HttpRequestState.Loading) {
-      hint = CircularProgressIndicator();
+      hint = const CircularProgressIndicator();
     }
     return ListView(
       children: [
         Padding(
-          padding: EdgeInsets.all(20),
+          padding: const EdgeInsets.all(20),
           child: Column(
             children: [
               TextField(
-                // controller: TextEditingController(text :"11111111111y放1"),
                 onChanged: (user) {
-                  print(user);
                   state.user = user;
                 },
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   icon: Icon(Icons.person),
                 ),
               ),
               TextField(
-                // controller: TextEditingController(text :"eeeeeee"),
                 onChanged: (pwd) {
                   state.pwd = pwd;
                 },
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   icon: Icon(Icons.password),
                 ),
                 obscureText: true,
@@ -162,14 +158,14 @@ class _LoginPageState extends State<LoginPage> with RouteAware {
                 children: [
                   TextButton(
                       onPressed: () {
-                        vm._register();
+                        vm.register();
                       },
-                      child: Text("注册")),
+                      child: const Text("注册")),
                   TextButton(
                       onPressed: () {
-                        vm._login();
+                        vm.login();
                       },
-                      child: Text("登录"))
+                      child: const Text("登录"))
                 ],
               ),
               hint
@@ -180,5 +176,3 @@ class _LoginPageState extends State<LoginPage> with RouteAware {
     );
   }
 }
-
-

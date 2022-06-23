@@ -23,6 +23,9 @@ class WanUrls {
 
   static const String WENDA = BASE_URL + "wenda/list/";
 
+  static const String USERINFO = BASE_URL + "user/lg/userinfo/json";
+
+
   static const String HOME_LIST = BASE_URL + "article/list/";
   static const String PROJECT_NEWEST = BASE_URL + "article/listproject/";
   static const String PROJECT_CLASSIFY = BASE_URL + "project/tree/json";

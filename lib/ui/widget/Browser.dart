@@ -51,6 +51,7 @@ class _BrowserState extends State<Browser> {
       body: InAppWebView(
         onWebViewCreated: (_controller1) {
           _controller=_controller1;
+          // _controller.addJavaScriptHandler(handlerName: handlerName, callback: callback)
         },
         key: webViewKey,
         initialUrlRequest: URLRequest(url: Uri.parse(widget.url)),

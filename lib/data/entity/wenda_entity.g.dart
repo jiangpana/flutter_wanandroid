@@ -1,114 +1,242 @@
-// GENERATED CODE - DO NOT MODIFY BY HAND
-
 part of 'wenda_entity.dart';
 
-// **************************************************************************
-// JsonSerializableGenerator
-// **************************************************************************
 
-WendaEntity _$WendaEntityFromJson(Map<String, dynamic> json) => WendaEntity()
-  ..curPage = json['curPage'] as int?
-  ..datas = (json['datas'] as List<dynamic>?)
-      ?.map((e) => WendaDatas.fromJson(e as Map<String, dynamic>))
-      .toList()
-  ..offset = json['offset'] as int?
-  ..over = json['over'] as bool?
-  ..pageCount = json['pageCount'] as int?
-  ..size = json['size'] as int?
-  ..total = json['total'] as int?;
+WendaEntity _$WendaEntityFromJson(Map<String, dynamic> json) {
+	final WendaEntity wendaEntity = WendaEntity();
+	final int? curPage = jsonConvert.convert<int>(json['curPage']);
+	if (curPage != null) {
+		wendaEntity.curPage = curPage;
+	}
+	final List<WendaDatas>? datas = jsonConvert.convertListNotNull<WendaDatas>(json['datas']);
+	if (datas != null) {
+		wendaEntity.datas = datas;
+	}
+	final int? offset = jsonConvert.convert<int>(json['offset']);
+	if (offset != null) {
+		wendaEntity.offset = offset;
+	}
+	final bool? over = jsonConvert.convert<bool>(json['over']);
+	if (over != null) {
+		wendaEntity.over = over;
+	}
+	final int? pageCount = jsonConvert.convert<int>(json['pageCount']);
+	if (pageCount != null) {
+		wendaEntity.pageCount = pageCount;
+	}
+	final int? size = jsonConvert.convert<int>(json['size']);
+	if (size != null) {
+		wendaEntity.size = size;
+	}
+	final int? total = jsonConvert.convert<int>(json['total']);
+	if (total != null) {
+		wendaEntity.total = total;
+	}
+	return wendaEntity;
+}
 
-Map<String, dynamic> _$WendaEntityToJson(WendaEntity instance) =>
-    <String, dynamic>{
-      'curPage': instance.curPage,
-      'datas': instance.datas,
-      'offset': instance.offset,
-      'over': instance.over,
-      'pageCount': instance.pageCount,
-      'size': instance.size,
-      'total': instance.total,
-    };
+Map<String, dynamic> _$WendaEntityToJson(WendaEntity entity) {
+	final Map<String, dynamic> data = <String, dynamic>{};
+	data['curPage'] = entity.curPage;
+	data['datas'] =  entity.datas?.map((v) => v.toJson()).toList();
+	data['offset'] = entity.offset;
+	data['over'] = entity.over;
+	data['pageCount'] = entity.pageCount;
+	data['size'] = entity.size;
+	data['total'] = entity.total;
+	return data;
+}
 
-WendaDatas _$WendaDatasFromJson(Map<String, dynamic> json) => WendaDatas()
-  ..apkLink = json['apkLink'] as String?
-  ..audit = json['audit'] as int?
-  ..author = json['author'] as String?
-  ..canEdit = json['canEdit'] as bool?
-  ..chapterId = json['chapterId'] as int?
-  ..chapterName = json['chapterName'] as String?
-  ..collect = json['collect'] as bool?
-  ..courseId = json['courseId'] as int?
-  ..desc = json['desc'] as String?
-  ..descMd = json['descMd'] as String?
-  ..envelopePic = json['envelopePic'] as String?
-  ..fresh = json['fresh'] as bool?
-  ..host = json['host'] as String?
-  ..id = json['id'] as int?
-  ..link = json['link'] as String?
-  ..niceDate = json['niceDate'] as String?
-  ..niceShareDate = json['niceShareDate'] as String?
-  ..origin = json['origin'] as String?
-  ..prefix = json['prefix'] as String?
-  ..projectLink = json['projectLink'] as String?
-  ..publishTime = json['publishTime'] as int?
-  ..realSuperChapterId = json['realSuperChapterId'] as int?
-  ..selfVisible = json['selfVisible'] as int?
-  ..shareDate = json['shareDate'] as int?
-  ..shareUser = json['shareUser'] as String?
-  ..superChapterId = json['superChapterId'] as int?
-  ..superChapterName = json['superChapterName'] as String?
-  ..tags = (json['tags'] as List<dynamic>?)
-      ?.map((e) => WendaDatasTags.fromJson(e as Map<String, dynamic>))
-      .toList()
-  ..title = json['title'] as String?
-  ..type = json['type'] as int?
-  ..userId = json['userId'] as int?
-  ..visible = json['visible'] as int?
-  ..zan = json['zan'] as int?;
+WendaDatas _$WendaDatasFromJson(Map<String, dynamic> json) {
+	final WendaDatas wendaDatas = WendaDatas();
+	final String? apkLink = jsonConvert.convert<String>(json['apkLink']);
+	if (apkLink != null) {
+		wendaDatas.apkLink = apkLink;
+	}
+	final int? audit = jsonConvert.convert<int>(json['audit']);
+	if (audit != null) {
+		wendaDatas.audit = audit;
+	}
+	final String? author = jsonConvert.convert<String>(json['author']);
+	if (author != null) {
+		wendaDatas.author = author;
+	}
+	final bool? canEdit = jsonConvert.convert<bool>(json['canEdit']);
+	if (canEdit != null) {
+		wendaDatas.canEdit = canEdit;
+	}
+	final int? chapterId = jsonConvert.convert<int>(json['chapterId']);
+	if (chapterId != null) {
+		wendaDatas.chapterId = chapterId;
+	}
+	final String? chapterName = jsonConvert.convert<String>(json['chapterName']);
+	if (chapterName != null) {
+		wendaDatas.chapterName = chapterName;
+	}
+	final bool? collect = jsonConvert.convert<bool>(json['collect']);
+	if (collect != null) {
+		wendaDatas.collect = collect;
+	}
+	final int? courseId = jsonConvert.convert<int>(json['courseId']);
+	if (courseId != null) {
+		wendaDatas.courseId = courseId;
+	}
+	final String? desc = jsonConvert.convert<String>(json['desc']);
+	if (desc != null) {
+		wendaDatas.desc = desc;
+	}
+	final String? descMd = jsonConvert.convert<String>(json['descMd']);
+	if (descMd != null) {
+		wendaDatas.descMd = descMd;
+	}
+	final String? envelopePic = jsonConvert.convert<String>(json['envelopePic']);
+	if (envelopePic != null) {
+		wendaDatas.envelopePic = envelopePic;
+	}
+	final bool? fresh = jsonConvert.convert<bool>(json['fresh']);
+	if (fresh != null) {
+		wendaDatas.fresh = fresh;
+	}
+	final String? host = jsonConvert.convert<String>(json['host']);
+	if (host != null) {
+		wendaDatas.host = host;
+	}
+	final int? id = jsonConvert.convert<int>(json['id']);
+	if (id != null) {
+		wendaDatas.id = id;
+	}
+	final String? link = jsonConvert.convert<String>(json['link']);
+	if (link != null) {
+		wendaDatas.link = link;
+	}
+	final String? niceDate = jsonConvert.convert<String>(json['niceDate']);
+	if (niceDate != null) {
+		wendaDatas.niceDate = niceDate;
+	}
+	final String? niceShareDate = jsonConvert.convert<String>(json['niceShareDate']);
+	if (niceShareDate != null) {
+		wendaDatas.niceShareDate = niceShareDate;
+	}
+	final String? origin = jsonConvert.convert<String>(json['origin']);
+	if (origin != null) {
+		wendaDatas.origin = origin;
+	}
+	final String? prefix = jsonConvert.convert<String>(json['prefix']);
+	if (prefix != null) {
+		wendaDatas.prefix = prefix;
+	}
+	final String? projectLink = jsonConvert.convert<String>(json['projectLink']);
+	if (projectLink != null) {
+		wendaDatas.projectLink = projectLink;
+	}
+	final int? publishTime = jsonConvert.convert<int>(json['publishTime']);
+	if (publishTime != null) {
+		wendaDatas.publishTime = publishTime;
+	}
+	final int? realSuperChapterId = jsonConvert.convert<int>(json['realSuperChapterId']);
+	if (realSuperChapterId != null) {
+		wendaDatas.realSuperChapterId = realSuperChapterId;
+	}
+	final int? selfVisible = jsonConvert.convert<int>(json['selfVisible']);
+	if (selfVisible != null) {
+		wendaDatas.selfVisible = selfVisible;
+	}
+	final int? shareDate = jsonConvert.convert<int>(json['shareDate']);
+	if (shareDate != null) {
+		wendaDatas.shareDate = shareDate;
+	}
+	final String? shareUser = jsonConvert.convert<String>(json['shareUser']);
+	if (shareUser != null) {
+		wendaDatas.shareUser = shareUser;
+	}
+	final int? superChapterId = jsonConvert.convert<int>(json['superChapterId']);
+	if (superChapterId != null) {
+		wendaDatas.superChapterId = superChapterId;
+	}
+	final String? superChapterName = jsonConvert.convert<String>(json['superChapterName']);
+	if (superChapterName != null) {
+		wendaDatas.superChapterName = superChapterName;
+	}
+	final List<WendaDatasTags>? tags = jsonConvert.convertListNotNull<WendaDatasTags>(json['tags']);
+	if (tags != null) {
+		wendaDatas.tags = tags;
+	}
+	final String? title = jsonConvert.convert<String>(json['title']);
+	if (title != null) {
+		wendaDatas.title = title;
+	}
+	final int? type = jsonConvert.convert<int>(json['type']);
+	if (type != null) {
+		wendaDatas.type = type;
+	}
+	final int? userId = jsonConvert.convert<int>(json['userId']);
+	if (userId != null) {
+		wendaDatas.userId = userId;
+	}
+	final int? visible = jsonConvert.convert<int>(json['visible']);
+	if (visible != null) {
+		wendaDatas.visible = visible;
+	}
+	final int? zan = jsonConvert.convert<int>(json['zan']);
+	if (zan != null) {
+		wendaDatas.zan = zan;
+	}
+	return wendaDatas;
+}
 
-Map<String, dynamic> _$WendaDatasToJson(WendaDatas instance) =>
-    <String, dynamic>{
-      'apkLink': instance.apkLink,
-      'audit': instance.audit,
-      'author': instance.author,
-      'canEdit': instance.canEdit,
-      'chapterId': instance.chapterId,
-      'chapterName': instance.chapterName,
-      'collect': instance.collect,
-      'courseId': instance.courseId,
-      'desc': instance.desc,
-      'descMd': instance.descMd,
-      'envelopePic': instance.envelopePic,
-      'fresh': instance.fresh,
-      'host': instance.host,
-      'id': instance.id,
-      'link': instance.link,
-      'niceDate': instance.niceDate,
-      'niceShareDate': instance.niceShareDate,
-      'origin': instance.origin,
-      'prefix': instance.prefix,
-      'projectLink': instance.projectLink,
-      'publishTime': instance.publishTime,
-      'realSuperChapterId': instance.realSuperChapterId,
-      'selfVisible': instance.selfVisible,
-      'shareDate': instance.shareDate,
-      'shareUser': instance.shareUser,
-      'superChapterId': instance.superChapterId,
-      'superChapterName': instance.superChapterName,
-      'tags': instance.tags,
-      'title': instance.title,
-      'type': instance.type,
-      'userId': instance.userId,
-      'visible': instance.visible,
-      'zan': instance.zan,
-    };
+Map<String, dynamic> _$WendaDatasToJson(WendaDatas entity) {
+	final Map<String, dynamic> data = <String, dynamic>{};
+	data['apkLink'] = entity.apkLink;
+	data['audit'] = entity.audit;
+	data['author'] = entity.author;
+	data['canEdit'] = entity.canEdit;
+	data['chapterId'] = entity.chapterId;
+	data['chapterName'] = entity.chapterName;
+	data['collect'] = entity.collect;
+	data['courseId'] = entity.courseId;
+	data['desc'] = entity.desc;
+	data['descMd'] = entity.descMd;
+	data['envelopePic'] = entity.envelopePic;
+	data['fresh'] = entity.fresh;
+	data['host'] = entity.host;
+	data['id'] = entity.id;
+	data['link'] = entity.link;
+	data['niceDate'] = entity.niceDate;
+	data['niceShareDate'] = entity.niceShareDate;
+	data['origin'] = entity.origin;
+	data['prefix'] = entity.prefix;
+	data['projectLink'] = entity.projectLink;
+	data['publishTime'] = entity.publishTime;
+	data['realSuperChapterId'] = entity.realSuperChapterId;
+	data['selfVisible'] = entity.selfVisible;
+	data['shareDate'] = entity.shareDate;
+	data['shareUser'] = entity.shareUser;
+	data['superChapterId'] = entity.superChapterId;
+	data['superChapterName'] = entity.superChapterName;
+	data['tags'] =  entity.tags?.map((v) => v.toJson()).toList();
+	data['title'] = entity.title;
+	data['type'] = entity.type;
+	data['userId'] = entity.userId;
+	data['visible'] = entity.visible;
+	data['zan'] = entity.zan;
+	return data;
+}
 
-WendaDatasTags _$WendaDatasTagsFromJson(Map<String, dynamic> json) =>
-    WendaDatasTags()
-      ..name = json['name'] as String?
-      ..url = json['url'] as String?;
+WendaDatasTags _$WendaDatasTagsFromJson(Map<String, dynamic> json) {
+	final WendaDatasTags wendaDatasTags = WendaDatasTags();
+	final String? name = jsonConvert.convert<String>(json['name']);
+	if (name != null) {
+		wendaDatasTags.name = name;
+	}
+	final String? url = jsonConvert.convert<String>(json['url']);
+	if (url != null) {
+		wendaDatasTags.url = url;
+	}
+	return wendaDatasTags;
+}
 
-Map<String, dynamic> _$WendaDatasTagsToJson(WendaDatasTags instance) =>
-    <String, dynamic>{
-      'name': instance.name,
-      'url': instance.url,
-    };
+Map<String, dynamic> _$WendaDatasTagsToJson(WendaDatasTags entity) {
+	final Map<String, dynamic> data = <String, dynamic>{};
+	data['name'] = entity.name;
+	data['url'] = entity.url;
+	return data;
+}

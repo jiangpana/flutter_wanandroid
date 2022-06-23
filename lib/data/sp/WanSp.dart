@@ -1,19 +1,26 @@
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../generated/json/base/json_convert_content.dart';
 import 'dart:convert' as convert;
 
-class LocalRepository {
-  LocalRepository._private();
+import '../../generated/json/base/json_convert_content.dart';
 
-  static final _instance = LocalRepository._private();
+class WanSp {
+  WanSp._();
 
-  factory LocalRepository() => _instance;
+  static WanSp? _instance;
+
+  factory WanSp() {
+    _instance ??= WanSp._();
+    return _instance!;
+  }
 
   Future<T?> get<T>(String key) async {
     var sp = await SharedPreferences.getInstance();
-    var jsonStr =sp.getString(key);
-    return jsonConvert.convert<T>(convert.jsonDecode(jsonStr!));
+    var jsonStr = sp.getString(key);
+    if(jsonStr==null){
+      return null;
+    }
+    return jsonConvert.convert<T>(convert.jsonDecode(jsonStr));
   }
 
   put<T>(String key, String json) async {
@@ -21,7 +28,7 @@ class LocalRepository {
     sp.setString(key, json);
   }
 
-  remove(String key) async{
+  remove(String key) async {
     var sp = await SharedPreferences.getInstance();
     sp.remove(key);
   }

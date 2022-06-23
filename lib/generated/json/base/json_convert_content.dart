@@ -8,6 +8,7 @@ import 'package:flutter_wanandroid/data/entity/article_list_entity.dart';
 import 'package:flutter_wanandroid/data/entity/collect_entity.dart';
 import 'package:flutter_wanandroid/data/entity/navi_entity.dart';
 import 'package:flutter_wanandroid/data/entity/user_entity.dart';
+import 'package:flutter_wanandroid/data/entity/userinfo_entity.dart';
 import 'package:flutter_wanandroid/data/entity/wenda_entity.dart';
 
 JsonConvert jsonConvert = JsonConvert();
@@ -22,6 +23,10 @@ class JsonConvert {
 		(NaviEntity).toString(): NaviEntity.fromJson,
 		(NaviArticles).toString(): NaviArticles.fromJson,
 		(UserEntity).toString(): UserEntity.fromJson,
+		(UserinfoEntity).toString(): UserinfoEntity.fromJson,
+		(UserinfoCoinInfo).toString(): UserinfoCoinInfo.fromJson,
+		(UserinfoCollectArticleInfo).toString(): UserinfoCollectArticleInfo.fromJson,
+		(UserinfoUserInfo).toString(): UserinfoUserInfo.fromJson,
 		(WendaEntity).toString(): WendaEntity.fromJson,
 		(WendaDatas).toString(): WendaDatas.fromJson,
 		(WendaDatasTags).toString(): WendaDatasTags.fromJson,
@@ -120,6 +125,18 @@ class JsonConvert {
 		}
 		if(<UserEntity>[] is M){
 			return data.map<UserEntity>((Map<String, dynamic> e) => UserEntity.fromJson(e)).toList() as M;
+		}
+		if(<UserinfoEntity>[] is M){
+			return data.map<UserinfoEntity>((Map<String, dynamic> e) => UserinfoEntity.fromJson(e)).toList() as M;
+		}
+		if(<UserinfoCoinInfo>[] is M){
+			return data.map<UserinfoCoinInfo>((Map<String, dynamic> e) => UserinfoCoinInfo.fromJson(e)).toList() as M;
+		}
+		if(<UserinfoCollectArticleInfo>[] is M){
+			return data.map<UserinfoCollectArticleInfo>((Map<String, dynamic> e) => UserinfoCollectArticleInfo.fromJson(e)).toList() as M;
+		}
+		if(<UserinfoUserInfo>[] is M){
+			return data.map<UserinfoUserInfo>((Map<String, dynamic> e) => UserinfoUserInfo.fromJson(e)).toList() as M;
 		}
 		if(<WendaEntity>[] is M){
 			return data.map<WendaEntity>((Map<String, dynamic> e) => WendaEntity.fromJson(e)).toList() as M;

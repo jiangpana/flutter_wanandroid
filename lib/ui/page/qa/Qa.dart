@@ -7,27 +7,25 @@ import 'package:pull_to_refresh/pull_to_refresh.dart';
 import '../../../data/entity/wenda_entity.dart';
 import '../../../ext/NavExt.dart';
 import '../../widget/Browser.dart';
+import '../../widget/ListItem.dart';
 import '../../widget/Loading.dart';
 import '../../widget/Refresh.dart';
 import '../../widget/StatePage.dart';
 
 class QaState {
-
   WendaEntity? wendaEntity;
   var datas = <WendaDatas>[];
 
-  QaState.initial()
-      :
-        datas = <WendaDatas>[];
+  QaState.initial() : datas = <WendaDatas>[];
 
-  QaState({ this.wendaEntity, required this.datas});
+  QaState({this.wendaEntity, required this.datas});
 
   int getNextPage() {
-    return wendaEntity == null ? 0 :wendaEntity!.curPage!+1;
+    return wendaEntity == null ? 0 : wendaEntity!.curPage! + 1;
   }
 
   void refresh() {
-    wendaEntity =null;
+    wendaEntity = null;
   }
 
   QaState copyWith({
@@ -42,33 +40,31 @@ class QaState {
 }
 
 class QaViewModel extends BaseViewModel {
-
   late var refreshController = RefreshController();
 
   late final qaPageNotifier = newNotifier(QaState.initial());
+
   QaState get _qaState => qaPageNotifier.state;
 
   set _qaState(QaState state) {
     qaPageNotifier.state = state;
   }
 
-
-
   refresh() async {
     _qaState.refresh();
     await _request();
-    if(httpState.isFail()){
+    if (httpState.isFail()) {
       refreshController.refreshFailed();
-    }else{
+    } else {
       refreshController.refreshCompleted();
     }
   }
 
   loadMore() async {
     await _request();
-    if(httpState.isFail()){
+    if (httpState.isFail()) {
       refreshController.loadFailed();
-    }else{
+    } else {
       refreshController.loadComplete();
     }
   }
@@ -80,15 +76,19 @@ class QaViewModel extends BaseViewModel {
   _request() async {
     var value = await service
         .httpGet<WendaEntity>("${WanUrls.WENDA}${_qaState.getNextPage()}/json");
-    if(value !=null){
+    if (value != null) {
       var data = <WendaDatas>[];
       data.addAll(_qaState.datas);
       if (value.curPage == 0) {
         data.clear();
       }
-      data.addAll(value.datas??[]);
-      _qaState = _qaState.copyWith(datas: data,wendaEntity: value);
+      data.addAll(value.datas ?? []);
+      _qaState = _qaState.copyWith(datas: data, wendaEntity: value);
     }
+  }
+
+  showFailedPage() {
+    return httpState.isFail() && _qaState.datas.isEmpty;
   }
 }
 
@@ -101,10 +101,7 @@ class _QaPageState extends State<QaPage> with AutomaticKeepAliveClientMixin {
   @override
   bool get wantKeepAlive => true;
 
-
-
   late var vm = QaViewModel();
-
 
   @override
   void initState() {
@@ -118,7 +115,6 @@ class _QaPageState extends State<QaPage> with AutomaticKeepAliveClientMixin {
     super.build(context);
     return Consumer(builder: (context, ref, _) {
       var data = vm.qaPageNotifier.watch(ref).datas;
-      var httpState = vm.getHttpState(ref);
       return refreshListStatePage(
           child: RefreshList(
               controller: vm.refreshController,
@@ -129,85 +125,25 @@ class _QaPageState extends State<QaPage> with AutomaticKeepAliveClientMixin {
                 await vm.loadMore();
               },
               content: ListView.builder(
-                itemBuilder: (c, index) => homeListItem(data[index], (item) {
-                  navToPage(Browser(item.link!, item.title!));
-                }),
-                itemExtent: 100.0,
+                itemBuilder: (c, index) {
+                  final entity = data[index];
+                  return commonListItem(
+                      id: entity.id!,
+                      title: entity.title,
+                      shareUser: entity.shareUser,
+                      chapterName: entity.superChapterName,
+                      niceDate: entity.niceDate,
+                      link: entity.link,
+                      itemClick: () {
+                        navToPage(Browser(entity.link!, entity.title!));
+                      });
+                },
                 itemCount: data.length,
               )),
-          fail: httpState.isFail(),
+          fail: vm.showFailedPage(),
           retry: () {
             vm.retry();
           });
     });
   }
-}
-
-homeListItem(WendaDatas item, Function(WendaDatas) callback) {
-  return InkWell(
-    onTap: () {
-      callback.call(item);
-    },
-    child: Card(
-      color: Colors.white,
-      shadowColor: Colors.grey,
-      elevation: 4,
-      borderOnForeground: false,
-      margin: const EdgeInsets.fromLTRB(8, 8, 8, 8),
-      // 外边距
-      child: Padding(
-        padding: const EdgeInsets.all(8),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Flexible(
-              child: Text(
-                textAlign: TextAlign.left,
-                overflow: TextOverflow.ellipsis,
-                maxLines: 1,
-                item.title ?? "",
-                style: const TextStyle(color: Colors.black, fontSize: 15),
-              ),
-            ),
-            SizedBox(
-              height: 10,
-            ),
-            Row(
-              children: [
-                Icon(
-                  Icons.person,
-                  color: Colors.blue,
-                ),
-                Flexible(
-                    child: Text(
-                  textAlign: TextAlign.left,
-                  overflow: TextOverflow.ellipsis,
-                  maxLines: 1,
-                  "${item.superChapterName ?? ""}/${item.chapterName ?? ""}",
-                  style: const TextStyle(color: Colors.black54, fontSize: 13),
-                )),
-                SizedBox(
-                  width: 8,
-                ),
-                Icon(
-                  Icons.access_time,
-                  color: Colors.blue,
-                ),
-                Flexible(
-                    child: Text(
-                  textAlign: TextAlign.left,
-                  overflow: TextOverflow.ellipsis,
-                  maxLines: 1,
-                  "${item.niceDate ?? ""}",
-                  style: const TextStyle(color: Colors.black54, fontSize: 13),
-                ))
-              ],
-            ),
-          ],
-        ),
-      ),
-    ),
-  );
 }

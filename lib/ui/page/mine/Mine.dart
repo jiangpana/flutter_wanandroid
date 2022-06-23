@@ -5,12 +5,13 @@ import 'package:flutter_wanandroid/ui/page/collect/Collect.dart';
 import 'package:flutter_wanandroid/ui/page/login/Login.dart';
 
 import '../../../base/vm/BaseViewModel.dart';
-import '../../../data/entity/navi_entity.dart';
+import '../../../data/WanRepository.dart';
 import '../../../data/entity/user_entity.dart';
 import '../../../ext/EventBusExt.dart';
 import '../../../ext/ToastExt.dart';
 import '../../../http/WanUrls.dart';
 import '../../widget/Dialog.dart';
+import '../history/History.dart';
 
 const String LOGIN_RESULT_SUC = "login_result_suc";
 
@@ -48,7 +49,7 @@ class MineViewModel extends BaseViewModel {
 
   init() {
     _onLogin.resume();
-    repository.get<UserEntity>(WanUrls.LOGIN).then((value) {
+    repository.sp.get<UserEntity>(WanUrls.LOGIN).then((value) {
       if (value != null) {
         _minePageState =  _minePageState.copyWith(user: value);
       }
@@ -65,7 +66,7 @@ class MineViewModel extends BaseViewModel {
     await service.httpGet(WanUrls.LOGOUT);
     onLogout?.call();
     _minePageState = _minePageState.copyWith(user: null);
-    repository.remove(WanUrls.LOGIN);
+    repository.sp.remove(WanUrls.LOGIN);
   }
 
   void showDialog() {
@@ -94,15 +95,17 @@ class _MinePageState extends State<MinePage>
   bool get wantKeepAlive => true;
 
   late var vm = MineViewModel();
-  static const String COLLECT = "收藏";
-  static const String SETTING = "设置";
-  static const String LOG_OUT = "退出登录";
+  static const String collect = "收藏";
+  static const String readRecord = "阅读记录";
+  static const String setting = "设置";
+  static const String logOut = "退出登录";
   late var items = [
-    {SETTING, Icon(Icons.settings)},
+    {readRecord, Icon(Icons.article_sharp)},
+    {setting, Icon(Icons.settings)},
   ];
   late var loginItems = [
-    {COLLECT, Icon(Icons.favorite)},
-    {LOG_OUT, Icon(Icons.logout)},
+    {collect, Icon(Icons.favorite)},
+    {logOut, Icon(Icons.logout)},
   ];
 
   @override
@@ -130,11 +133,11 @@ class _MinePageState extends State<MinePage>
    _mineContent(MineState data) {
     var title = items.last.elementAt(0) as String;
     if (data.user != null) {
-      if (title != LOG_OUT) {
+      if (title != logOut) {
         items.addAll(loginItems);
       }
     } else {
-      if (title == LOG_OUT) {
+      if (title == logOut) {
         items.removeRange(items.length - loginItems.length, items.length);
       }
     }
@@ -218,13 +221,16 @@ class _MinePageState extends State<MinePage>
   }
 
   void _onItemClick(String title) {
-    if (title == LOG_OUT) {
+    if (title == logOut) {
       vm.showDialog();
     }
-    if (title == SETTING) {
+    if (title == readRecord) {
+      navToPage(HistoryPage());
+    }
+    if (title == setting) {
       showToast("SETTING");
     }
-    if (title == COLLECT) {
+    if (title == collect) {
       navToPage(CollectPage());
     }
   }

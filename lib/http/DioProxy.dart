@@ -1,29 +1,56 @@
 import 'package:dio/dio.dart';
-import 'package:flutter_wanandroid/generated/json/base/json_convert_content.dart';
-import '../base/state/BaseState.dart';
-import '../base/vm/BaseViewModel.dart';
 import '../data/WanRepository.dart';
-import 'DioProxy.dart';
+
+import 'CookieManager.dart';
 import 'base/base_entity.dart';
+
+
 
 const successCode = 0;
 
-class WanAndroidService {
-  late BaseViewModel state;
+
+class DioProxy {
+
   late WanRepository repository = WanRepository();
 
-  WanAndroidService(this.state) {}
 
-  late final DioProxy _dioProxy = DioProxy();
+  late Dio dio = Dio();
 
-  Future<T?> httpGet<T>(String path,
-      {Map<String, dynamic>? queryParameters,
-      Options? options,
-      CancelToken? cancelToken,
-      ProgressCallback? onReceiveProgress}) async {
-    state.setHttpRequestState(HttpRequestState.Loading);
+  DioProxy._() {
+    dio.interceptors.add(TokenInterceptor());
+    dio.interceptors.add(CookieManager.instance);
+  }
+
+  static DioProxy? _instance;
+
+  factory DioProxy() {
+    _instance??=DioProxy._();
+    return _instance!;
+  }
+
+  addGlobalHeaders(map) {
+    dio.options.headers.addAll(map);
+  }
+
+  addGlobalHeader(key, value) {
+    dio.options.headers.addAll({key: value});
+  }
+
+  addInterceptor(interceptor) {
+    dio.interceptors.add(interceptor);
+  }
+
+  Future<T?> get<T>(
+    String path, {
+    Map<String, dynamic>? queryParameters,
+    Options? options,
+    CancelToken? cancelToken,
+    ProgressCallback? onReceiveProgress,
+    Function? start,
+    Function? fail,
+  }) async {
     try {
-      var response = await _dioProxy.dio.get(
+      var response = await dio.get(
         path,
         queryParameters: queryParameters,
         options: options,
@@ -33,23 +60,20 @@ class WanAndroidService {
       if (response.statusCode == 200) {
         return processResponse<T>(response, path)!;
       } else {
-        state.setHttpRequestState(HttpRequestState.Fail);
         return null;
       }
     } catch (e) {
-      state.setHttpRequestState(HttpRequestState.Fail);
       return null;
     }
   }
 
-  Future<List<T>?> httpListGet<T>(String path,
+  Future<List<T>?> getList<T>(String path,
       {Map<String, dynamic>? queryParameters,
       Options? options,
       CancelToken? cancelToken,
       ProgressCallback? onReceiveProgress}) async {
-    state.setHttpRequestState(HttpRequestState.Loading);
     try {
-      var response = await _dioProxy.dio.get(
+      var response = await dio.get(
         path,
         queryParameters: queryParameters,
         options: options,
@@ -59,21 +83,18 @@ class WanAndroidService {
       if (response.statusCode == 200) {
         return processListResponse<T>(response, path);
       } else {
-        state.setHttpRequestState(HttpRequestState.Fail);
         return null;
       }
     } catch (e) {
       print(e);
-      state.setHttpRequestState(HttpRequestState.Fail);
       return null;
     }
   }
 
-  Future<T?> httpPost<T>(String path,
+  Future<T?> post<T>(String path,
       {queryParameters, options, data, cancelToken, onReceiveProgress}) async {
-    state.setHttpRequestState(HttpRequestState.Loading);
     try {
-      var response = await _dioProxy.dio.post(
+      var response = await dio.post(
         path,
         data: data,
         queryParameters: queryParameters,
@@ -84,11 +105,9 @@ class WanAndroidService {
       if (response.statusCode == 200) {
         return processResponse<T>(response, path)!;
       } else {
-        state.setHttpRequestState(HttpRequestState.Fail);
         return null;
       }
     } catch (e) {
-      state.setHttpRequestState(HttpRequestState.Fail);
       return null;
     }
   }
@@ -97,11 +116,7 @@ class WanAndroidService {
     var entity = BaseEntity<T>.fromJson(rep.data);
     print("entity = $entity");
     if (entity.errorCode == successCode) {
-      state.setHttpRequestState(HttpRequestState.Suc);
       repository.sp.put(path, entity.data.toString());
-    } else {
-      state.setHttpRequestState(HttpRequestState.Fail,
-          message: entity.errorMsg!);
     }
     try {
       return entity.data;
@@ -111,22 +126,30 @@ class WanAndroidService {
   }
 
   List<T>? processListResponse<T>(Response<dynamic> rep, String path) {
-/*   var json = rep.data as Map<String, dynamic>;
-    var entity = BaseListEntity<T>.fromJson(rep.data);
-   var data =json['data'];
-   return JsonConvert().convertListNotNull<T>(data);*/
     var entity = BaseListEntity<T>.fromJson(rep.data);
     if (entity.errorCode == successCode) {
-      state.setHttpRequestState(HttpRequestState.Suc);
       repository.sp.put(path, entity.data.toString());
-    } else {
-      state.setHttpRequestState(HttpRequestState.Fail,
-          message: entity.errorMsg!);
     }
     try {
       return entity.data;
     } catch (e) {
       return null;
     }
+  }
+}
+
+class TokenInterceptor extends Interceptor {
+  @override
+  void onRequest(RequestOptions options, RequestInterceptorHandler handler) {
+    ///token from cache
+    // var token = Cache.getToken();
+    // options.headers["Authorization"] = "Basic $token";
+    print(options.uri);
+    super.onRequest(options, handler);
+  }
+
+  @override
+  void onResponse(Response response, ResponseInterceptorHandler handler) {
+    super.onResponse(response, handler);
   }
 }

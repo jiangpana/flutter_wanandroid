@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_wanandroid/base/BaseState.dart';
+import 'package:flutter_wanandroid/base/state/BaseState.dart';
 
 import '../../ext/NetStateExt.dart';
 import 'Loading.dart';
@@ -15,7 +15,8 @@ Widget statePage(
       return child;
     case HttpRequestState.Fail:
       return Center(
-        child: Column(mainAxisAlignment:MainAxisAlignment.center,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Icon(Icons.near_me_disabled),
             TextButton(
@@ -29,32 +30,24 @@ Widget statePage(
   }
 }
 
-
 Widget refreshListStatePage(
     {required Widget child, required bool fail, Function? retry}) {
   var items = [child];
-/*  if (fail) {
-    items.add(Align(
-      alignment: Alignment.bottomRight,
-      child: Container(
-        padding: EdgeInsets.all(4),
-        margin: EdgeInsets.all(10),
-        decoration: BoxDecoration(color:Colors.red ,shape:BoxShape.circle),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(Icons.no_adult_content,color: Colors.white,),
-            TextButton(
-                onPressed: () {
-                  retry?.call();
-                },
-                child: Text("刷新 ",style:TextStyle(color: Colors.white) ))
-          ],
-        ),
+  if (fail) {
+    items.add(Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(Icons.near_me_disabled),
+          TextButton(
+              onPressed: () {
+                retry?.call();
+              },
+              child: Text("加载出错 , 点击重试 "))
+        ],
       ),
     ));
-  }*/
+  }
   return Stack(
     children: items,
   );
