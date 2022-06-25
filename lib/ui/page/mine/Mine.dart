@@ -12,6 +12,7 @@ import '../../../ext/ToastExt.dart';
 import '../../../http/WanUrls.dart';
 import '../../widget/Dialog.dart';
 import '../history/History.dart';
+import '../setting/Setting.dart';
 
 const String LOGIN_RESULT_SUC = "login_result_suc";
 
@@ -228,7 +229,7 @@ class _MinePageState extends State<MinePage>
       navToPage(HistoryPage());
     }
     if (title == setting) {
-      showToast("SETTING");
+      navToPage(SettingPage());
     }
     if (title == collect) {
       navToPage(CollectPage());

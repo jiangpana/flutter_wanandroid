@@ -41,6 +41,8 @@ class HistoryViewModel extends BaseViewModel {
 }
 
 class HistoryPage extends StatefulWidget {
+  const HistoryPage({Key? key}) : super(key: key);
+
   @override
   State<StatefulWidget> createState() => _HistoryPageState();
 }
@@ -64,7 +66,7 @@ class _HistoryPageState extends State<HistoryPage>
     super.build(context);
     return Scaffold(
         appBar: AppBar(
-          title: const Text("历史记录"),
+          title: const Text("阅读记录"),
         ),
         body: Consumer(builder: (context, ref, _) {
           var data = vm.qaPageNotifier.watch(ref).datas;

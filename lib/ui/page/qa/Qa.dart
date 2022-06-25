@@ -115,6 +115,7 @@ class _QaPageState extends State<QaPage> with AutomaticKeepAliveClientMixin {
     super.build(context);
     return Consumer(builder: (context, ref, _) {
       var data = vm.qaPageNotifier.watch(ref).datas;
+      var httpState = vm.watchHttpState(ref);
       return refreshListStatePage(
           child: RefreshList(
               controller: vm.refreshController,

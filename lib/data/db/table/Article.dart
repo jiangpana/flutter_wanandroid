@@ -4,6 +4,7 @@ import '../WanAndroidDatabase.dart';
 
 const String tableArticle = 'article';
 const String columnId = '_id';
+const String columnArticleId = 'articleId';
 const String columnTitle = 'title';
 const String columnChapterName = 'chapterName';
 const String columnShareUser = 'shareUser';
@@ -29,7 +30,7 @@ class Article {
       columnChapterName: chapterName,
       columnCollect: collect == true ? 1 : 0
     };
-    map[columnId] = id;
+    map[columnArticleId] = id;
     return map;
   }
 
@@ -43,7 +44,7 @@ class Article {
       this.collect});
 
   factory Article.fromMap(Map<String, dynamic> map) => Article(
-      id: map[columnId],
+      id: map[columnArticleId],
       title: map[columnTitle],
       chapterName: map[columnChapterName],
       shareUser: map[columnShareUser],
@@ -67,12 +68,12 @@ class ArticleTableProvider {
     open();
   }
   Future open() async {
-    var databasesPath = await getDatabasesPath();
-    _db = await openDatabase(dateBaseName, version: 1,
+    _db = await openDatabase(databaseName, version: 1,
         onCreate: (Database _db, int version) async {
       await _db.execute('''
 create table $tableArticle ( 
   $columnId integer primary key autoincrement, 
+  $columnArticleId integer not null,
   $columnTitle text not null,
   $columnChapterName text not null,
   $columnShareUser text not null,
@@ -84,10 +85,8 @@ create table $tableArticle (
   }
 
   Future<Article> insert(Article article) async {
-    // article.id = await _db.insert(tableArticle, article.toMap() ,conflictAlgorithm:ConflictAlgorithm.replace);
-    // return article;
     var batch= _db.batch();
-    batch.delete(tableArticle, where: '$columnId = ?', whereArgs: [article.id]);
+    batch.delete(tableArticle, where: '$columnArticleId = ?', whereArgs: [article.id]);
     batch.insert(tableArticle, article.toMap() ,conflictAlgorithm:ConflictAlgorithm.replace);
     await batch.commit(continueOnError: true);
    return article;
@@ -98,17 +97,19 @@ create table $tableArticle (
     if (maps.isNotEmpty) {
       var list =<Article>[];
       for (var element in maps) {
-        list.add(Article.fromMap(element));
+       var en= Article.fromMap(element);
+       print("getAll ${en.id}");
+        list.add(en);
       }
-      return list;
+      return list.reversed.toList();
     }
     return null;
   }
 
   Future<Article?> getArticle(int id) async {
     List<Map<String, dynamic>> maps = await _db.query(tableArticle,
-        columns: [columnId, columnTitle,columnChapterName ,columnShareUser,  columnNiceDate  ,columnCollect],
-        where: '$columnId = ?',
+        columns: [columnArticleId, columnTitle,columnChapterName ,columnShareUser,  columnNiceDate  ,columnCollect],
+        where: '$columnArticleId = ?',
         whereArgs: [id]);
     if (maps.isNotEmpty) {
       return Article.fromMap(maps.first);
@@ -118,12 +119,12 @@ create table $tableArticle (
 
   Future<int> delete(int id) async {
     return await _db
-        .delete(tableArticle, where: '$columnId = ?', whereArgs: [id]);
+        .delete(tableArticle, where: '$columnArticleId = ?', whereArgs: [id]);
   }
 
   Future<int> update(Article article) async {
     return await _db.update(tableArticle, article.toMap(),
-        where: '$columnId = ?', whereArgs: [article.id]);
+        where: '$columnArticleId = ?', whereArgs: [article.id]);
   }
 
   Future close() async => _db.close();

@@ -7,6 +7,7 @@ class WanUrls {
   // 参数：
   // 	username，password
   static const String LOGIN = BASE_URL + "user/login";
+
   static const String LOGOUT = BASE_URL + "user/logout/json";
 
   //方法：POST
@@ -14,19 +15,20 @@ class WanUrls {
   // 	username,password,repassword
   static const String REGISTER = BASE_URL + "user/register";
 
-
   //方法：GET
   //参数：无
   static const String NAVI = BASE_URL + "navi/json";
-
-
 
   static const String WENDA = BASE_URL + "wenda/list/";
 
   static const String USERINFO = BASE_URL + "user/lg/userinfo/json";
 
-
   static const String HOME_LIST = BASE_URL + "article/list/";
+
+  //方法：GET
+  // 参数： 页码：拼接在链接中，从0开始。
+  static const String COLLECTED_ARTICLE = BASE_URL + "lg/collect/list/";
+
   static const String PROJECT_NEWEST = BASE_URL + "article/listproject/";
   static const String PROJECT_CLASSIFY = BASE_URL + "project/tree/json";
   static const String PROJECT_LIST = BASE_URL + "project/list/";
@@ -40,9 +42,7 @@ class WanUrls {
   static const String AVATAR_CODING =
       "https://coding.net/static/fruit_avatar/Fruit-";
   static const String AVATAR_LEGO = "https://randomuser.me/api/portraits/lego/";
-  //方法：GET
-  // 参数： 页码：拼接在链接中，从0开始。
-  static const String COLLECTED_ARTICLE = BASE_URL + "lg/collect/list/";
+
   static const String COLLECT_IN_ARTICLE = BASE_URL + "lg/collect/";
   static const String COLLECT_OUT_ARTICLE = BASE_URL + "lg/collect/add/json";
   static const String UNCOLLECT_ARTICLE = BASE_URL + "lg/uncollect_originId/";

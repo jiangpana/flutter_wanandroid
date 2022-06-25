@@ -17,6 +17,7 @@ commonListItem(
     //点击时的水波纹颜色
     splashColor: Colors.transparent,
     onTap: () {
+      print(link);
       WanRepository().db.articleTable.insert(Article(
             id: id,
             title: title,

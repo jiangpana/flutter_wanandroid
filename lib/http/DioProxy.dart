@@ -112,6 +112,27 @@ class DioProxy {
     }
   }
 
+  Future<List<T>?> postList<T>(String path,
+      {queryParameters, options, data, cancelToken, onReceiveProgress}) async {
+    try {
+      var response = await dio.post(
+        path,
+        data: data,
+        queryParameters: queryParameters,
+        options: options,
+        cancelToken: cancelToken,
+        onReceiveProgress: onReceiveProgress,
+      );
+      if (response.statusCode == 200) {
+        return processListResponse<T>(response, path)!;
+      } else {
+        return null;
+      }
+    } catch (e) {
+      return null;
+    }
+  }
+
   T? processResponse<T>(Response<dynamic> rep, String path) {
     var entity = BaseEntity<T>.fromJson(rep.data);
     print("entity = $entity");

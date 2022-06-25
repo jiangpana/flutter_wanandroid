@@ -2,7 +2,7 @@
 
 import 'package:flutter_wanandroid/data/db/table/Article.dart';
 
-const dateBaseName ="wan_android.db";
+const databaseName ="wan_android.db";
 
 
 class WanAndroidDatabase{
@@ -17,7 +17,5 @@ class WanAndroidDatabase{
 
   final articleTable = ArticleTableProvider.get();
 
-  ArticleTableProvider getArticleTable(){
-    return ArticleTableProvider.get();
-  }
+
 }
