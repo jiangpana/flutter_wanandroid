@@ -1,20 +1,26 @@
 
 
+import 'package:flutter_wanandroid/base/vm/BaseViewModel.dart';
 import 'package:flutter_wanandroid/data/sp/WanSp.dart';
 
 import 'db/WanAndroidDatabase.dart';
+import 'http/WanServer.dart';
 
 
 class WanRepository {
 
-  WanRepository._();
+  late  BaseViewModel vm ;
+
+  WanRepository._(this.vm );
+
   static  WanRepository? _instance ;
-  factory WanRepository(){
-    _instance??= WanRepository._();
+
+  factory WanRepository(BaseViewModel vm){
+    _instance??= WanRepository._(vm);
     return _instance!;
   }
 
-  var db = WanAndroidDatabase();
-  var sp = WanSp();
-
+  static var db = WanAndroidDatabase();
+  static var sp = WanSp();
+  late var server =WanAndroidServer(vm);
 }

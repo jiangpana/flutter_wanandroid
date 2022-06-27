@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_wanandroid/data/entity/user_entity.dart';
 import 'package:flutter_wanandroid/ext/NavExt.dart';
-import 'package:flutter_wanandroid/http/WanUrls.dart';
 
 import '../../../base/state/BaseState.dart';
 import '../../../base/vm/BaseViewModel.dart';
+import '../../../data/http/WanUrls.dart';
 import '../../../ext/EventBusExt.dart';
 import '../../../main.dart';
 import '../mine/Mine.dart';

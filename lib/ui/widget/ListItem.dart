@@ -18,7 +18,7 @@ commonListItem(
     splashColor: Colors.transparent,
     onTap: () {
       print(link);
-      WanRepository().db.articleTable.insert(Article(
+      WanRepository.db.articleTable.insert(Article(
             id: id,
             title: title,
             shareUser: shareUser,

@@ -34,7 +34,7 @@ class HistoryViewModel extends BaseViewModel {
   }
 
   init() async {
-    WanRepository().db.articleTable.getAll().then((value) {
+    WanRepository.db.articleTable.getAll().then((value) {
       _qaState = _qaState.copyWith(datas: value);
     });
   }

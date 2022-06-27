@@ -7,9 +7,9 @@ import 'package:flutter_wanandroid/ui/page/login/Login.dart';
 import '../../../base/vm/BaseViewModel.dart';
 import '../../../data/WanRepository.dart';
 import '../../../data/entity/user_entity.dart';
+import '../../../data/http/WanUrls.dart';
 import '../../../ext/EventBusExt.dart';
 import '../../../ext/ToastExt.dart';
-import '../../../http/WanUrls.dart';
 import '../../widget/Dialog.dart';
 import '../history/History.dart';
 import '../setting/Setting.dart';
@@ -50,7 +50,7 @@ class MineViewModel extends BaseViewModel {
 
   init() {
     _onLogin.resume();
-    repository.sp.get<UserEntity>(WanUrls.LOGIN).then((value) {
+    WanRepository.sp.get<UserEntity>(WanUrls.LOGIN).then((value) {
       if (value != null) {
         _minePageState =  _minePageState.copyWith(user: value);
       }
@@ -67,7 +67,7 @@ class MineViewModel extends BaseViewModel {
     await service.httpGet(WanUrls.LOGOUT);
     onLogout?.call();
     _minePageState = _minePageState.copyWith(user: null);
-    repository.sp.remove(WanUrls.LOGIN);
+    WanRepository.sp.remove(WanUrls.LOGIN);
   }
 
   void showDialog() {

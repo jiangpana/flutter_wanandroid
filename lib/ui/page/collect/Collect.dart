@@ -5,8 +5,8 @@ import 'package:flutter_wanandroid/ui/page/collect/state/collect_state.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 import '../../../base/vm/BaseViewModel.dart';
+import '../../../data/http/WanUrls.dart';
 import '../../../ext/NavExt.dart';
-import '../../../http/WanUrls.dart';
 import '../../widget/Browser.dart';
 import '../../widget/ListItem.dart';
 import '../../widget/Refresh.dart';

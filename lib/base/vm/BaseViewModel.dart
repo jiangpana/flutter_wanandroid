@@ -1,13 +1,13 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_wanandroid/data/WanRepository.dart';
 
-import '../../http/WanServer.dart';
+import '../../data/http/WanServer.dart';
 import '../state/BaseState.dart';
 
 abstract class BaseViewModel {
   BaseViewModel();
 
-  late final WanRepository repository = WanRepository();
+  late final WanRepository repository = WanRepository(this);
   late final WanAndroidServer service = WanAndroidServer(this);
   late final HttpState _httpState = HttpState();
 

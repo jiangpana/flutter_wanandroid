@@ -8,7 +8,7 @@ import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 import '../../../base/vm/BaseViewModel.dart';
 import '../../../data/entity/article_list_entity.dart';
-import '../../../http/WanUrls.dart';
+import '../../../data/http/WanUrls.dart';
 import '../../widget/Browser.dart';
 import '../../widget/ListItem.dart';
 import '../../widget/Refresh.dart';

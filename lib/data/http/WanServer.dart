@@ -1,13 +1,12 @@
 import 'package:dio/dio.dart';
-import 'package:flutter_wanandroid/generated/json/base/json_convert_content.dart';
-import '../base/state/BaseState.dart';
-import '../base/vm/BaseViewModel.dart';
-import '../data/WanRepository.dart';
-import '../data/entity/article_list_entity.dart';
-import '../data/entity/collect_entity.dart';
-import '../data/entity/navi_entity.dart';
-import '../data/entity/user_entity.dart';
-import '../data/entity/wenda_entity.dart';
+import '../../base/state/BaseState.dart';
+import '../../base/vm/BaseViewModel.dart';
+import '../WanRepository.dart';
+import '../entity/article_list_entity.dart';
+import '../entity/collect_entity.dart';
+import '../entity/navi_entity.dart';
+import '../entity/user_entity.dart';
+import '../entity/wenda_entity.dart';
 import 'DioProxy.dart';
 import 'WanUrls.dart';
 import 'base/base_entity.dart';
@@ -16,9 +15,8 @@ const successCode = 0;
 
 class WanAndroidServer {
   late BaseViewModel state;
-  late WanRepository repository = WanRepository();
 
-  WanAndroidServer(this.state) {}
+  WanAndroidServer(this.state);
 
   late Dio dio = Dio();
 
@@ -143,7 +141,7 @@ class WanAndroidServer {
     var entity = BaseEntity<T>.fromJson(rep.data);
     if (entity.errorCode == successCode) {
       state.setHttpRequestState(HttpRequestState.Suc);
-      repository.sp.put(path, entity.data.toString());
+      WanRepository.sp.put(path, entity.data.toString());
     } else {
       state.setHttpRequestState(HttpRequestState.Fail,
           message: entity.errorMsg!);
@@ -163,7 +161,7 @@ class WanAndroidServer {
     var entity = BaseListEntity<T>.fromJson(rep.data);
     if (entity.errorCode == successCode) {
       state.setHttpRequestState(HttpRequestState.Suc);
-      repository.sp.put(path, entity.data.toString());
+      WanRepository.sp.put(path, entity.data.toString());
     } else {
       state.setHttpRequestState(HttpRequestState.Fail,
           message: entity.errorMsg!);

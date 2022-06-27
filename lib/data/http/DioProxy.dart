@@ -1,5 +1,5 @@
 import 'package:dio/dio.dart';
-import '../data/WanRepository.dart';
+import '../WanRepository.dart';
 
 import 'CookieManager.dart';
 import 'base/base_entity.dart';
@@ -11,7 +11,6 @@ const successCode = 0;
 
 class DioProxy {
 
-  late WanRepository repository = WanRepository();
 
 
   late Dio dio = Dio();
@@ -137,7 +136,7 @@ class DioProxy {
     var entity = BaseEntity<T>.fromJson(rep.data);
     print("entity = $entity");
     if (entity.errorCode == successCode) {
-      repository.sp.put(path, entity.data.toString());
+      WanRepository.sp.put(path, entity.data.toString());
     }
     try {
       return entity.data;
@@ -149,7 +148,7 @@ class DioProxy {
   List<T>? processListResponse<T>(Response<dynamic> rep, String path) {
     var entity = BaseListEntity<T>.fromJson(rep.data);
     if (entity.errorCode == successCode) {
-      repository.sp.put(path, entity.data.toString());
+      WanRepository.sp.put(path, entity.data.toString());
     }
     try {
       return entity.data;

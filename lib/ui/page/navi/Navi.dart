@@ -3,8 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_wanandroid/base/vm/BaseViewModel.dart';
 import 'package:flutter_wanandroid/data/entity/navi_entity.dart';
 import 'package:flutter_wanandroid/ext/NavExt.dart';
-import 'package:flutter_wanandroid/http/WanUrls.dart';
 
+import '../../../data/http/WanUrls.dart';
 import '../../widget/Browser.dart';
 import '../../widget/Loading.dart';
 import '../../widget/StatePage.dart';

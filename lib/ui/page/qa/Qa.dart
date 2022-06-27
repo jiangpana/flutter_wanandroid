@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_wanandroid/base/vm/BaseViewModel.dart';
-import 'package:flutter_wanandroid/http/WanUrls.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 import '../../../data/entity/wenda_entity.dart';
+import '../../../data/http/WanUrls.dart';
 import '../../../ext/NavExt.dart';
 import '../../widget/Browser.dart';
 import '../../widget/ListItem.dart';

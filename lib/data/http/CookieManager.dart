@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
-import 'package:flutter_wanandroid/http/WanUrls.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+import 'WanUrls.dart';
 
 
 const keyCookie = "cookie";

@@ -6,7 +6,8 @@ import 'package:flutter_wanandroid/ui/page/mine/Mine.dart';
 import 'package:flutter_wanandroid/ui/page/navi/Navi.dart';
 import 'package:flutter_wanandroid/ui/page/qa/Qa.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
-import 'http/CookieManager.dart';
+
+import 'data/http/CookieManager.dart';
 
 final RouteObserver<Route<dynamic>> routeObserver = RouteObserver();
 late BuildContext sContext;
