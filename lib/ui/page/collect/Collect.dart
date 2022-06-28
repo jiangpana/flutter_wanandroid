@@ -59,8 +59,7 @@ class CollectVm extends BaseViewModel {
   }
 
   _request() async {
-    var value = await service.httpGet<CollectEntity>(
-        "${WanUrls.COLLECTED_ARTICLE}${_getNextPage()}/json");
+    var value = await service.getCollectedArticle(page: _getNextPage());
     if (value != null) {
       var data = <CollectDatas>[];
       data.addAll(_collectState.datas);

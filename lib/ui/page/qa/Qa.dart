@@ -74,8 +74,7 @@ class QaViewModel extends BaseViewModel {
   }
 
   _request() async {
-    var value = await service
-        .httpGet<WendaEntity>("${WanUrls.WENDA}${_qaState.getNextPage()}/json");
+    var value = await service.getWenda(page: _qaState.getNextPage());
     if (value != null) {
       var data = <WendaDatas>[];
       data.addAll(_qaState.datas);
@@ -106,7 +105,6 @@ class _QaPageState extends State<QaPage> with AutomaticKeepAliveClientMixin {
   @override
   void initState() {
     super.initState();
-    // 初始化
     vm.refresh();
   }
 

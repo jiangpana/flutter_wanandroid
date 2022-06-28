@@ -9,7 +9,6 @@ import '../../../data/WanRepository.dart';
 import '../../../data/entity/user_entity.dart';
 import '../../../data/http/WanUrls.dart';
 import '../../../ext/EventBusExt.dart';
-import '../../../ext/ToastExt.dart';
 import '../../widget/Dialog.dart';
 import '../history/History.dart';
 import '../setting/Setting.dart';
@@ -64,7 +63,7 @@ class MineViewModel extends BaseViewModel {
   Function? onLogout;
 
   void _logout() async {
-    await service.httpGet(WanUrls.LOGOUT);
+    await service.logout();
     onLogout?.call();
     _minePageState = _minePageState.copyWith(user: null);
     WanRepository.sp.remove(WanUrls.LOGIN);

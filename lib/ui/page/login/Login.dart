@@ -41,21 +41,18 @@ class LoginViewModel extends BaseViewModel {
   }
 
   register() async {
-    var rep =
-        await service.httpPost<UserEntity>(WanUrls.REGISTER, queryParameters: {
-      "username": _loginPageState.user,
-      "password": _loginPageState.pwd,
-      "repassword": _loginPageState.pwd,
-    });
+    var rep = await service.register(
+      username: _loginPageState.user,
+      password: _loginPageState.pwd,
+    );
     _loginPageState = _loginPageState.copyWith(rep: rep.toString());
   }
 
   login() async {
-    var rep =
-        await service.httpPost<UserEntity>(WanUrls.LOGIN, queryParameters: {
-      "username": _loginPageState.user,
-      "password": _loginPageState.pwd,
-    });
+    var rep = await service.login(
+      username: _loginPageState.user,
+      password: _loginPageState.pwd,
+    );
     if (rep != null) {
       eventBus.fire(EventFn({
         LOGIN_RESULT_SUC: rep,
@@ -119,7 +116,6 @@ class _LoginPageState extends State<LoginPage> with RouteAware {
   }
 
   _loginContent(LoginViewModel vm, WidgetRef ref) {
-
     var state = vm.loginPageNotifier.watch(ref);
     var httpState = vm.watchHttpState(ref).state;
     var message = vm.watchHttpState(ref).message;
@@ -128,6 +124,7 @@ class _LoginPageState extends State<LoginPage> with RouteAware {
       style: const TextStyle(color: Colors.red),
     );
     if (httpState == HttpRequestState.Loading) {
+      print("loading");
       hint = const CircularProgressIndicator();
     }
     return ListView(

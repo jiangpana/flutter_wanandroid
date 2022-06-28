@@ -58,8 +58,7 @@ class HomeVm extends BaseViewModel {
   }
 
   _request() async {
-    var value = await service.httpGet<ArticleListEntity>(
-        "${WanUrls.HOME_LIST}${_getNextPage()}/json");
+    var value = await service.getArticleList(page:_getNextPage());
     if (value != null) {
       var data = <ArticleListDatas>[];
       data.addAll(_homeState.datas);

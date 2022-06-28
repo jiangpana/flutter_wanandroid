@@ -58,31 +58,13 @@ class ArticleTableProvider {
 
   static ArticleTableProvider? _instance ;
 
-  static ArticleTableProvider get()=>ArticleTableProvider();
+  static ArticleTableProvider  get (Database db)  =>ArticleTableProvider(db);
 
-  factory ArticleTableProvider() {
-    _instance ??= ArticleTableProvider._();
+  factory ArticleTableProvider(db) {
+    _instance ??= ArticleTableProvider._(db);
     return _instance!;
   }
-  ArticleTableProvider._(){
-    open();
-  }
-  Future open() async {
-    _db = await openDatabase(databaseName, version: 1,
-        onCreate: (Database _db, int version) async {
-      await _db.execute('''
-create table $tableArticle ( 
-  $columnId integer primary key autoincrement, 
-  $columnArticleId integer not null,
-  $columnTitle text not null,
-  $columnChapterName text not null,
-  $columnShareUser text not null,
-  $columnNiceDate text not null,
-  $columnLink text not null,
-  $columnCollect integer not null)
-''');
-    });
-  }
+  ArticleTableProvider._(this._db);
 
   Future<Article> insert(Article article) async {
     var batch= _db.batch();

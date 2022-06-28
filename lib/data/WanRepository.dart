@@ -11,13 +11,10 @@ class WanRepository {
 
   late  BaseViewModel vm ;
 
-  WanRepository._(this.vm );
-
-  static  WanRepository? _instance ;
-
-  factory WanRepository(BaseViewModel vm){
-    _instance??= WanRepository._(vm);
-    return _instance!;
+  WanRepository(this.vm ){
+    //初始化 db , sp
+    WanAndroidDatabase();
+    WanSp();
   }
 
   static var db = WanAndroidDatabase();

@@ -19,42 +19,14 @@ class BaseEntity<T> {
   }
 }
 
-class BaseListEntity<T> {
-  List<T>? data;
-  int? errorCode;
-  String? errorMsg;
 
-  BaseListEntity();
-
-  factory BaseListEntity.fromJson(Map<String, dynamic> json) =>
-      _$BaseListEntityFromJson(json);
-
-  @override
-  String toString() {
-    return data.toString();
-  }
-}
 
 BaseEntity<T> _$BaseEntityFromJson<T>(Map<String, dynamic> json) {
   final BaseEntity<T> baseEntity = BaseEntity();
-  T? data = jsonConvert.convert<T>(json['data']);
-  if (data != null) {
-    baseEntity.data = data;
+  T? data;
+  if(json['data'] !=null){
+    data = JsonConvert.fromJsonAsT<T>(json['data']);
   }
-  final int? errorCode = jsonConvert.convert<int>(json['errorCode']);
-  if (errorCode != null) {
-    baseEntity.errorCode = errorCode;
-  }
-  final String? errorMsg = jsonConvert.convert<String>(json['errorMsg']);
-  if (errorMsg != null) {
-    baseEntity.errorMsg = errorMsg;
-  }
-  return baseEntity;
-}
-
-BaseListEntity<A> _$BaseListEntityFromJson<A>(Map<String, dynamic> json) {
-  final BaseListEntity<A> baseEntity = BaseListEntity();
-  var data = jsonConvert.convertListNotNull<A>(json['data']);
   if (data != null) {
     baseEntity.data = data;
   }
@@ -76,3 +48,5 @@ Map<String, dynamic> _$BaseEntityToJson(BaseEntity entity) {
   data['errorMsg'] = entity.errorMsg;
   return data;
 }
+
+

@@ -8,7 +8,7 @@ abstract class BaseViewModel {
   BaseViewModel();
 
   late final WanRepository repository = WanRepository(this);
-  late final WanAndroidServer service = WanAndroidServer(this);
+  late final WanAndroidServer service = repository.server;
   late final HttpState _httpState = HttpState();
 
   get httpState=>_httpState;

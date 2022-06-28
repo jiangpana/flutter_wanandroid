@@ -4,9 +4,7 @@ import 'package:flutter_wanandroid/base/vm/BaseViewModel.dart';
 import 'package:flutter_wanandroid/data/entity/navi_entity.dart';
 import 'package:flutter_wanandroid/ext/NavExt.dart';
 
-import '../../../data/http/WanUrls.dart';
 import '../../widget/Browser.dart';
-import '../../widget/Loading.dart';
 import '../../widget/StatePage.dart';
 
 class NaviState {
@@ -24,6 +22,7 @@ class NaviState {
 }
 
 class NaviViewModel extends BaseViewModel {
+
   late final naviPageNotifier = newNotifier(NaviState());
 
   NaviState get _minePageState => naviPageNotifier.state;
@@ -32,9 +31,9 @@ class NaviViewModel extends BaseViewModel {
     naviPageNotifier.state = state;
   }
 
-  void init() {
-    var data = service.httpListGet<NaviEntity>(WanUrls.NAVI);
-    data.then((value) {
+  void init() async {
+    service.getNavi().then((value) {
+      print("service.getNavi() = ${value![0]}");
       _minePageState = _minePageState.copyWith(naviData: value);
     });
   }

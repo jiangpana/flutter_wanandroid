@@ -46,12 +46,10 @@ class CookieManager extends Interceptor {
     if (response.statusCode == 200) {
       if (response.realUri.toString().contains(WanUrls.LOGIN)) {
         if (response.headers.map['set-cookie'] != null) {
-          print("cookie -> ${response.headers.map['set-cookie']}");
           _persistCookie(response.headers.map['set-cookie']!);
         }
       }
       if (response.realUri.toString() == WanUrls.LOGOUT) {
-        print("cookie -> clear");
         _clearCookie();
       }
     }
@@ -64,7 +62,6 @@ class CookieManager extends Interceptor {
     RequestInterceptorHandler handler,
   ) {
     options.headers[keyCookie] = _cookie;
-    print("onRequest cookie =$_cookie");
     return super.onRequest(options, handler);
   }
 }
