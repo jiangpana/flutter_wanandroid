@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
-import 'package:flutter_wanandroid/ext/ToastExt.dart';
+import 'package:flutter_wanandroid/ext/NavExt.dart';
 
 
 
 //https://github.com/pichillilorenzo/flutter_inappwebview/issues/365
 
 class Browser extends StatefulWidget {
-  const Browser(this.url, this.title) : super();
+   Browser(this.url,  this.title) : super();
 
   final String url;
-  final String title;
+ String title;
 
   @override
   _BrowserState createState() => _BrowserState();
@@ -31,6 +31,11 @@ class _BrowserState extends State<Browser> {
       "}" +
       "})()";
 
+  setTitle(title){
+    setState(() {
+      widget.title = title;
+    });
+  }
   final GlobalKey webViewKey = GlobalKey();
   InAppWebViewGroupOptions options = InAppWebViewGroupOptions(
     crossPlatform: InAppWebViewOptions(
@@ -47,21 +52,21 @@ class _BrowserState extends State<Browser> {
       allowsInlineMediaPlayback: true,
     ),
   );
-
+  var urls =[];
   @override
   Widget build(BuildContext context) {
     late InAppWebViewController _controller;
     return WillPopScope(
         onWillPop: () async {
-          _controller.canGoBack().then((value) {
+    /*      _controller.canGoBack().then((value) {
             if (value) {
               _controller.goBack();
             } else {
               return Navigator.pop(context);
             }
             ;
-          });
-
+          });*/
+          Navigator.pop(context);
           return false;
         },
         child: Scaffold(
@@ -70,8 +75,41 @@ class _BrowserState extends State<Browser> {
           ),
           body: InAppWebView(
             shouldOverrideUrlLoading: (controller, navigationAction) async {
-              controller.loadUrl(urlRequest: navigationAction.request);
-              return null;
+              var url =navigationAction.request.url.toString();
+              var urlScheme =navigationAction.request.url?.scheme.toString()??"";
+              print("url = $url");
+              if(url.startsWith("https://app-wvhzpj.openinstall")){
+                return NavigationActionPolicy.CANCEL;
+              }
+              if(url.startsWith("https://csdn-app.csdn.net/csdn.apk")){
+                return NavigationActionPolicy.CANCEL;
+              }
+              if(url.startsWith("snssdk2606://")){
+                return NavigationActionPolicy.CANCEL;
+              }
+              if(url.startsWith("https://z.juejin.cn/Ft2w?scheme=snssdk2606")){
+                return NavigationActionPolicy.CANCEL;
+              }
+              if(url.startsWith("https://www.jianshu.com/apps")){
+                return NavigationActionPolicy.CANCEL;
+              }
+              if(url.startsWith(" https://downloads.jianshu")){
+                return NavigationActionPolicy.CANCEL;
+              }
+              if(!urls.contains(url.toString())){
+                urls.add(url.toString());
+                if(!urlScheme.startsWith("jianshu")
+                    &&!urlScheme.startsWith("wvhzpj")
+                    &&!urlScheme.startsWith("snssdk2606")
+                    &&!urlScheme.startsWith("bytedance")
+                ){
+                  print("urlScheme =$urlScheme");
+                  print("url = $url");
+                  navToPage(Browser(url, ""));
+                  urls.remove(url);
+                }
+              }
+              return NavigationActionPolicy.CANCEL;
             },
             onWebViewCreated: (_controller1) {
               _controller = _controller1;
@@ -92,6 +130,12 @@ class _BrowserState extends State<Browser> {
               await controller.evaluateJavascript(source:"console.log(document.documentElement.innerHTML);");
               await controller.evaluateJavascript(source:jsCode );
             },
+              onTitleChanged:(controller,title){
+
+              setTitle(title);
+              print("title = $title");
+              }
+            ,
             onLoadResourceCustomScheme: (InAppWebViewController controller, url) async {
               if (url.scheme == "my-special-custom-scheme") {
                 var bytes = await rootBundle.load("test_assets/${url.toString().replaceFirst("my-special-custom-scheme://", "", 0)}");
