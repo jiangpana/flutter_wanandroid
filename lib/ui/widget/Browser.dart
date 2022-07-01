@@ -74,10 +74,12 @@ class _BrowserState extends State<Browser> {
             title: Text(widget.title),
           ),
           body: InAppWebView(
+            onLongPressHitTestResult:(controller,hitTestResult){
+
+            } ,
             shouldOverrideUrlLoading: (controller, navigationAction) async {
               var url =navigationAction.request.url.toString();
               var urlScheme =navigationAction.request.url?.scheme.toString()??"";
-              print("url = $url");
               if(url.startsWith("https://app-wvhzpj.openinstall")){
                 return NavigationActionPolicy.CANCEL;
               }
@@ -93,19 +95,20 @@ class _BrowserState extends State<Browser> {
               if(url.startsWith("https://www.jianshu.com/apps")){
                 return NavigationActionPolicy.CANCEL;
               }
-              if(url.startsWith(" https://downloads.jianshu")){
+              if(url.startsWith("https://downloads.jianshu")){
                 return NavigationActionPolicy.CANCEL;
               }
               if(!urls.contains(url.toString())){
                 urls.add(url.toString());
-                if(!urlScheme.startsWith("jianshu")
-                    &&!urlScheme.startsWith("wvhzpj")
-                    &&!urlScheme.startsWith("snssdk2606")
-                    &&!urlScheme.startsWith("bytedance")
+                if(urlScheme.startsWith("http") || urlScheme.startsWith("https")
                 ){
-                  print("urlScheme =$urlScheme");
-                  print("url = $url");
-                  navToPage(Browser(url, ""));
+                  print("url IsRedirect =${navigationAction.androidIsRedirect}");
+                  if(navigationAction.androidIsRedirect == true){
+                    controller.loadUrl(urlRequest: navigationAction.request);
+                  }else{
+                    navToPage(Browser(url, ""));
+                    print("url navToPage  = $url");
+                  }
                   urls.remove(url);
                 }
               }
@@ -123,17 +126,15 @@ class _BrowserState extends State<Browser> {
             },
             key: webViewKey,
             onLoadStop: (controller, url) async {
-              await controller.evaluateJavascript(source: """      
+/*              await controller.evaluateJavascript(source: """
     const args = [1, true, ['bar', 5], {foo: 'baz'}];
     window.flutter_inappwebview.callHandler('imageClick', ...args);
   """);
               await controller.evaluateJavascript(source:"console.log(document.documentElement.innerHTML);");
-              await controller.evaluateJavascript(source:jsCode );
+              await controller.evaluateJavascript(source:jsCode );*/
             },
               onTitleChanged:(controller,title){
-
               setTitle(title);
-              print("title = $title");
               }
             ,
             onLoadResourceCustomScheme: (InAppWebViewController controller, url) async {

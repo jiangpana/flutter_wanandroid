@@ -5,6 +5,7 @@ import 'package:flutter_wanandroid/ui/page/home/Home.dart';
 import 'package:flutter_wanandroid/ui/page/mine/Mine.dart';
 import 'package:flutter_wanandroid/ui/page/navi/Navi.dart';
 import 'package:flutter_wanandroid/ui/page/qa/Qa.dart';
+import 'package:flutter_wanandroid/ui/widget/CityChoose.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 import 'data/http/CookieManager.dart';
@@ -14,6 +15,7 @@ late BuildContext sContext;
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
+
 
   readRunApp();
 }

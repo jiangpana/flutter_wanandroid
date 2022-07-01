@@ -1,8 +1,12 @@
 
 
 
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_wanandroid/ui/widget/CityChoose.dart';
 
 import '../../../base/vm/BaseViewModel.dart';
 
@@ -45,8 +49,24 @@ class _SettingPageState extends State<SettingPage> with AutomaticKeepAliveClient
     super.initState();
     // 初始化
     vm.init();
+    rootBundle.loadString("assets/city.json").then((value) {
+      var data =<String>[];
+      var jsonCity=json.decode(value );
+      var list =jsonCity["city"] as List<dynamic>;
+      for (var element in list) {
+        var obj =element as Map<String, dynamic>;
+        data.add(obj["title"]);
+        data.addAll((obj["lists"] as List<dynamic>).map((e) => e.toString()));
+      }
+
+      setState((){
+        this.data.addAll(data);
+      });
+
+    });
   }
 
+  var data=<String>[];
   @override
   Widget build(BuildContext context) {
     super.build(context);
@@ -59,8 +79,8 @@ class _SettingPageState extends State<SettingPage> with AutomaticKeepAliveClient
 
   Widget _settingPageContent() {
    return Consumer(builder: (context, ref, _) {
-      var data = vm.settingPageNotifier.watch(ref);
-      return Text("待开发");
+      // var data = vm.settingPageNotifier.watch(ref);
+      return CityChoose(data);
     });
   }
 }

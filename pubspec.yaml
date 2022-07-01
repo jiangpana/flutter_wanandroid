@@ -26,7 +26,7 @@ dependencies:
   pull_to_refresh: ^2.0.0
   #https://pub.dev/packages/riverpod
   flutter_riverpod: ^2.0.0-dev.9
-  flutter_inappwebview: ^5.3.2
+  flutter_inappwebview: ^5.4.3+7
   event_bus: ^2.0.0
   fluttertoast: ^8.0.9
   freezed_annotation: ^2.0.3
