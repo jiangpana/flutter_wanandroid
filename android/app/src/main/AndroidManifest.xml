@@ -1,6 +1,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.jansir.flutter.wanandroid.flutter_wanandroid">
     <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-sdk tools:overrideLibrary="io.github.ponnamkarthik.toast.fluttertoast"/>
 
     <application
         android:label="flutter_wanandroid"

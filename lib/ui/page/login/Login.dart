@@ -88,10 +88,10 @@ class _LoginPageState extends State<LoginPage> with RouteAware {
   }
 
   @override
-  void didChangeDependencies() {
+  void initState() {
     routeObserver.subscribe(this, ModalRoute.of(context)!); //订阅
-    super.didChangeDependencies();
   }
+
 
   @override
   void dispose() {
